@@ -2,17 +2,28 @@ import math.Vector2;
 import math.Vector3;
 import meshgen.OBJFace;
 import meshgen.OBJMesh;
+import java.io.IOException;
 class MeshGen {  
-  public static void main(String args[]) {
+  public static void main(String args[]) throws IOException {
     // Args pArgs = new Args(args);
+    OBJMesh mesh = new OBJMesh();
+    mesh.positions.add(new Vector3(1,0,0));
+    mesh.positions.add(new Vector3(0,1,0));
+    mesh.positions.add(new Vector3(0,0,1));
+    OBJFace face = new OBJFace(3, false, false);
+    face.positions[0] = 0;
+    face.positions[1] = 1;
+    face.positions[2] = 2;
+    mesh.faces.add(face);
+    mesh.writeOBJ("foo.obj");
   }
 }
 
 // class to process and store the command line arguments.
 // modified from a post on piazza
 class Args {
-  public enum Mesh { SPHERE, CYLINDER };
-  Mesh g;   // -g <sphere|cylinder>
+  public enum MeshType { SPHERE, CYLINDER };
+  MeshType g;   // -g <sphere|cylinder>
   int n;    // [-n <divisionsU>]
   int m;    // [-n <divisionsV>]
   String o; // -o <outfile.obj>
@@ -40,10 +51,10 @@ class Args {
           case "-g":
                      switch(args[++j]){
                        case "sphere":
-                         g = Mesh.SPHERE;
+                         g = MeshType.SPHERE;
                          break;
                        case "cylinder":
-                         g = Mesh.CYLINDER;
+                         g = MeshType.CYLINDER;
                          break;
                        default:
                          throw new Exception("unrecognized argument");

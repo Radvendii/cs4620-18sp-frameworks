@@ -18,76 +18,54 @@ class MeshGen {
   }
 
   public static OBJMesh cylinder(int n){
+    //vertices will be 2x(n+1) array, denoting the point in the center followed by the circle, top face then bottom face
+    //uvs      will be 2x(nx2+2) array, denoting the same, 
+    //         but the last coordinate denotes whether the uv is for the side face or the top face. 
+    //         The +2 is for the edge condition of the side uv, and the center vertex uvs
+    //normals  will be n+2 array, denoting the same, but the second dimension is redundant except at the centers of the circles
     OBJMesh cylinder = new OBJMesh();
-    cylinder.positions.add(new Vector3(0,  1, 0));
-    cylinder.positions.add(new Vector3(0, -1, 0));
-    cylinder.normals.add(new Vector3(0,  1, 0));
-    cylinder.normals.add(new Vector3(0, -1, 0));
-    cylinder.uvs.add(new Vector2(0.75f, 0.75f));
-    cylinder.uvs.add(new Vector2(0.25f, 0.75f));
-    for(int i=0;i<n;i++){
-      double rads = (-Math.PI / 2) + (i * 2 * Math.PI / n);
-      float x = (float)Math.cos(rads);
-      float z = (float)Math.sin(rads);
-      cylinder.positions.add(new Vector3(x,  1, z));
-      cylinder.positions.add(new Vector3(x, -1, z));
-      cylinder.normals.add(new Vector3(x, 0, z));
-      cylinder.uvs.add(new Vector2(1 - (float) i / n, 0.5f));
-      cylinder.uvs.add(new Vector2(1 - (float) i / n, 0));
-      cylinder.uvs.add(new Vector2(x / 4 + 0.75f, -z / 4 + 0.75f));
-      cylinder.uvs.add(new Vector2(x / 4 + 0.25f, z / 4 + 0.75f));
+    for(int f=0;f<2;f++){ //top Face or bottom Face
+      cylinder.positions.add(new Vector3(0, 1-f*2, 0)); //center point
+      cylinder.normals.add(new Vector3(0, 1-f*2, 0)); //center point
+      cylinder.uvs.add(new Vector2(0.75f - f*0.5f, 0.75f));
+      for(int i=0;i<n;i++){
+        double rads = (Math.PI / 2) + (i * 2 * Math.PI / n);
+        float x = (float)Math.cos(rads);
+        float z = -(float)Math.sin(rads);
+        cylinder.positions.add(new Vector3(x, 1-f*2, z));
+        cylinder.uvs.add(new Vector2((float) i / n, (1-f)*0.5f));
+        cylinder.uvs.add(new Vector2(x / 4 + 0.75f-f*0.5f, (f*2-1)*z / 4 + 0.75f));
+        if(f == 0){ // no need to repeat
+          cylinder.normals.add(new Vector3(x, 0, z));
+        }
 
-      OBJFace topFace = new OBJFace(3, true, true);
-      topFace.positions[2] = 0;
-      topFace.positions[1] = i*2+2;
-      topFace.positions[0] = ((i+1) % n)*2+2;
-      topFace.uvs[2] = 0;
-      topFace.uvs[1] = i*4+4;
-      topFace.uvs[0] = ((i*4+6) % (4*n))+2;
-      topFace.uvs[0] = ((i+1) % n)*4+4;
+        OBJFace horz = new OBJFace(3, true, true);
+        horz.positions[f*2]     = (n+1)*f;
+        horz.positions[1]       = (n+1)*f + i                      +1;
+        horz.positions[(1-f)*2] = (n+1)*f + ((i+1) % n)            +1;
+        horz.uvs[f*2]           = (n*2+2)*f;
+        horz.uvs[1]             = (n*2+2)*f + 2*i           + 1    +1;
+        horz.uvs[(1-f)*2]       = (n*2+2)*f + 2*((i+1) % n) + 1    +1;
+        for(int j=0;j<3;j++){
+          horz.normals[j]       = (n+1)*f;
+        }
 
-      OBJFace botFace = new OBJFace(3, true, true);
-      botFace.positions[0] = 1;
-      botFace.positions[1] = i*2+3;
-      botFace.positions[2] = ((i+1) % n)*2+3;
-      botFace.uvs[0] = 1;
-      botFace.uvs[1] = i*4+5;
-      botFace.uvs[2] = ((i+1) % n)*4+5;
+        OBJFace side = new OBJFace(3, true, true);
+        side.positions[0]       = (n+1)*f       +   ((i+f)   % n)  +1;
+        side.positions[1]       = (n+1)*(1-f)   +   ((i+f)   % n)  +1;
+        side.positions[2]       = (n+1)*f       +   ((i+1-f) % n)  +1;
+        side.uvs[0]             = (n*2+2)*f     + 2*(i+f)          +1;
+        side.uvs[1]             = (n*2+2)*(1-f) + 2*(i+f)          +1;
+        side.uvs[2]             = (n*2+2)*f     + 2*(i+1-f)        +1;
+        side.normals[0]         = (i+f)   % n                      +1;
+        side.normals[1]         = (i+f)   % n                      +1;
+        side.normals[2]         = (i+1-f) % n                      +1; 
 
-      for(int j=0; j<3; j++){
-        topFace.normals[j] = 0;
-        botFace.normals[j] = 1;
+        cylinder.faces.add(horz);
+        cylinder.faces.add(side);
       }
-
-      OBJFace rightFace = new OBJFace(3, true, true);
-      rightFace.positions[0] = i*2+2;
-      rightFace.positions[1] = ((i+1) % n)*2+2;
-      rightFace.positions[2] = ((i+1) % n)*2+3;
-      rightFace.normals[0] = i+2;
-      rightFace.normals[1] = ((i+1) % n)+2;
-      rightFace.normals[2] = ((i+1) % n)+2;
-      rightFace.uvs[0] = i*4+2;
-      rightFace.uvs[1] = i*4+6;
-      rightFace.uvs[2] = i*4+7;
-
-      OBJFace leftFace = new OBJFace(3, true, true);
-      leftFace.positions[2] = i*2+2;
-      leftFace.positions[1] = i*2+3;
-      leftFace.positions[0] = ((i+1) % n)*2+3;
-      leftFace.normals[2] = i+2;
-      leftFace.normals[1] = i+2;
-      leftFace.normals[0] = ((i+1) % n)+2;
-      leftFace.uvs[2] = i*4+2;
-      leftFace.uvs[1] = i*4+3;
-      leftFace.uvs[0] = i*4+7;
-
-      cylinder.faces.add(topFace);
-      cylinder.faces.add(botFace);
-      cylinder.faces.add(rightFace);
-      cylinder.faces.add(leftFace);
+      cylinder.uvs.add(new Vector2(0, (1-f)*0.5f));
     }
-    cylinder.uvs.add(new Vector2(0, 0.5f));
-    cylinder.uvs.add(new Vector2(0, 0));
     return cylinder;
   }
 }

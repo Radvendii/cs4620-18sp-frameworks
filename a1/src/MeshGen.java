@@ -21,33 +21,73 @@ class MeshGen {
     OBJMesh cylinder = new OBJMesh();
     cylinder.positions.add(new Vector3(0,  1, 0));
     cylinder.positions.add(new Vector3(0, -1, 0));
+    cylinder.normals.add(new Vector3(0,  1, 0));
+    cylinder.normals.add(new Vector3(0, -1, 0));
+    cylinder.uvs.add(new Vector2(0.75f, 0.75f));
+    cylinder.uvs.add(new Vector2(0.25f, 0.75f));
     for(int i=0;i<n;i++){
       double rads = (-Math.PI / 2) + (i * 2 * Math.PI / n);
       float x = (float)Math.cos(rads);
       float z = (float)Math.sin(rads);
       cylinder.positions.add(new Vector3(x,  1, z));
       cylinder.positions.add(new Vector3(x, -1, z));
-      OBJFace topFace = new OBJFace(3, false, false);
+      cylinder.normals.add(new Vector3(x, 0, z));
+      cylinder.uvs.add(new Vector2(1 - (float) i / n, 0.5f));
+      cylinder.uvs.add(new Vector2(1 - (float) i / n, 0));
+      cylinder.uvs.add(new Vector2(x / 4 + 0.75f, -z / 4 + 0.75f));
+      cylinder.uvs.add(new Vector2(x / 4 + 0.25f, z / 4 + 0.75f));
+
+      OBJFace topFace = new OBJFace(3, true, true);
       topFace.positions[2] = 0;
       topFace.positions[1] = i*2+2;
-      topFace.positions[0] = ((i*2+2) % (2*n))+2;
-      cylinder.faces.add(topFace);
-      OBJFace botFace = new OBJFace(3, false, false);
+      topFace.positions[0] = ((i+1) % n)*2+2;
+      topFace.uvs[2] = 0;
+      topFace.uvs[1] = i*4+4;
+      topFace.uvs[0] = ((i*4+6) % (4*n))+2;
+      topFace.uvs[0] = ((i+1) % n)*4+4;
+
+      OBJFace botFace = new OBJFace(3, true, true);
       botFace.positions[0] = 1;
       botFace.positions[1] = i*2+3;
-      botFace.positions[2] = ((i*2+3) % (2*n))+2;
-      cylinder.faces.add(botFace);
-      OBJFace rightFace = new OBJFace(3, false, false);
+      botFace.positions[2] = ((i+1) % n)*2+3;
+      botFace.uvs[0] = 1;
+      botFace.uvs[1] = i*4+5;
+      botFace.uvs[2] = ((i+1) % n)*4+5;
+
+      for(int j=0; j<3; j++){
+        topFace.normals[j] = 0;
+        botFace.normals[j] = 1;
+      }
+
+      OBJFace rightFace = new OBJFace(3, true, true);
       rightFace.positions[0] = i*2+2;
-      rightFace.positions[1] = ((i*2+2) % (2*n))+2;
-      rightFace.positions[2] = ((i*2+3) % (2*n))+2;
-      cylinder.faces.add(rightFace);
-      OBJFace leftFace = new OBJFace(3, false, false);
+      rightFace.positions[1] = ((i+1) % n)*2+2;
+      rightFace.positions[2] = ((i+1) % n)*2+3;
+      rightFace.normals[0] = i+2;
+      rightFace.normals[1] = ((i+1) % n)+2;
+      rightFace.normals[2] = ((i+1) % n)+2;
+      rightFace.uvs[0] = i*4+2;
+      rightFace.uvs[1] = i*4+6;
+      rightFace.uvs[2] = i*4+7;
+
+      OBJFace leftFace = new OBJFace(3, true, true);
       leftFace.positions[2] = i*2+2;
       leftFace.positions[1] = i*2+3;
-      leftFace.positions[0] = ((i*2+3) % (2*n))+2;
+      leftFace.positions[0] = ((i+1) % n)*2+3;
+      leftFace.normals[2] = i+2;
+      leftFace.normals[1] = i+2;
+      leftFace.normals[0] = ((i+1) % n)+2;
+      leftFace.uvs[2] = i*4+2;
+      leftFace.uvs[1] = i*4+3;
+      leftFace.uvs[0] = i*4+7;
+
+      cylinder.faces.add(topFace);
+      cylinder.faces.add(botFace);
+      cylinder.faces.add(rightFace);
       cylinder.faces.add(leftFace);
     }
+    cylinder.uvs.add(new Vector2(0, 0.5f));
+    cylinder.uvs.add(new Vector2(0, 0));
     return cylinder;
   }
 }
@@ -62,7 +102,7 @@ class Args {
   public static String o; // -o <outfile.obj>
   public static String i; // -i <infile.obj>
 
-  public static Args(String[] args) {
+  public Args(String[] args) {
     //when undefined
     g = null;
     o = null;

@@ -12,6 +12,8 @@ class MeshGen {
         cylinder(pArgs.n).writeOBJ(pArgs.o);
         break;
       case SPHERE:
+        sphere(pArgs.n, pArgs.m).writeOBJ(pArgs.o);
+        break;
       default:
         System.exit(-1);
     }
@@ -67,6 +69,83 @@ class MeshGen {
       cylinder.uvs.add(new Vector2(0, (1-f)*0.5f));
     }
     return cylinder;
+  }
+
+  public static OBJMesh sphere(int n, int m){
+    OBJMesh sphere = new OBJMesh();
+    sphere.positions.add(new Vector3(0, 1, 0));
+    sphere.positions.add(new Vector3(0, -1, 0));
+    sphere.normals.add(new Vector3(0,1,0));
+    sphere.normals.add(new Vector3(0,-1,0));
+
+    for(int i=0;i<n+1;i++){
+      for(int j=0;j<m+1;j++){
+        sphere.uvs.add(new Vector2((float)i / (n+1), 1.0f - (float)j / (m+1)));
+      }
+    }
+    for(int i=0;i<n;i++){
+      double theta = i * 2 * Math.PI / n;
+
+      OBJFace top = new OBJFace(3, true, true);
+      top.positions[0]       = 0;
+      top.positions[1]       = (m-1)*i            +2;
+      top.positions[2]       = (m-1)*((i+1) % n)  +2;
+      top.normals[0]         = 0;
+      top.normals[1]         = (m-1)*i            +2;
+      top.normals[2]         = (m-1)*((i+1) % n)  +2;
+      top.uvs[0]             = (m+1)*i;
+      top.uvs[1]             = (m+1)*i     + 1;
+      top.uvs[2]             = (m+1)*(i+1) + 1;
+      sphere.faces.add(top);
+
+      OBJFace bot = new OBJFace(3, true, true);
+      bot.positions[0]       = 1;
+      bot.positions[2]       = (m-1)*i           + (m-2)  +2;
+      bot.positions[1]       = (m-1)*((i+1) % n) + (m-2)  +2;
+      bot.normals[0]         = 1;
+      bot.normals[2]         = (m-1)*i           + (m-2)  +2;
+      bot.normals[1]         = (m-1)*((i+1) % n) + (m-2)  +2;
+      bot.uvs[0]             = (m+1)*i     + m;
+      bot.uvs[1]             = (m+1)*i     + (m-1);
+      bot.uvs[2]             = (m+1)*(i+1) + (m-1);
+      sphere.faces.add(bot);
+
+      for(int j=0;j<m-1;j++){
+        double phi = (j+1) * Math.PI / m;
+        float y = (float)Math.cos(phi);
+        float x = -(float)(Math.sin(phi) * Math.sin(theta));
+        float z = -(float)(Math.sin(phi) * Math.cos(theta));
+        sphere.positions.add(new Vector3(x,y,z));
+        sphere.normals.add(new Vector3(x,y,z));
+
+        if(j<m-2){
+          OBJFace face1 = new OBJFace(3, true, true);
+          face1.positions[0]       = (m-1)*i           + j    +2;
+          face1.positions[1]       = (m-1)*i           + j+1  +2;
+          face1.positions[2]       = (m-1)*((i+1) % n) + j+1  +2;
+          face1.normals[0]         = (m-1)*i           + j    +2;
+          face1.normals[1]         = (m-1)*i           + j+1  +2;
+          face1.normals[2]         = (m-1)*((i+1) % n) + j+1  +2;
+          face1.uvs[0]             = (m+1)*i           + j+1;
+          face1.uvs[1]             = (m+1)*i           + j+2;
+          face1.uvs[2]             = (m+1)*(i+1)       + j+2;
+          sphere.faces.add(face1);
+
+          OBJFace face2 = new OBJFace(3, true, true);
+          face2.positions[0]       = (m-1)*i           + j    +2;
+          face2.positions[1]       = (m-1)*((i+1) % n) + j+1  +2;
+          face2.positions[2]       = (m-1)*((i+1) % n) + j    +2;
+          face2.normals[0]         = (m-1)*i           + j    +2;
+          face2.normals[1]         = (m-1)*((i+1) % n) + j+1  +2;
+          face2.normals[2]         = (m-1)*((i+1) % n) + j    +2;
+          face2.uvs[0]             = (m+1)*i           + j+1;
+          face2.uvs[1]             = (m+1)*(i+1)       + j+2;
+          face2.uvs[2]             = (m+1)*(i+1)       + j+1;
+          sphere.faces.add(face2);
+        }
+      }
+    }
+    return sphere;
   }
 }
 

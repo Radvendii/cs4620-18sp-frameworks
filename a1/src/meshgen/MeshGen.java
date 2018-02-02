@@ -37,7 +37,7 @@ class MeshGen {
         face.normals[i] = face.positions[i];
         v[i] = mesh.positions.get(face.positions[i]);
       }
-      Vector3 faceNormal = v[1].clone().sub(v[0]).cross(v[2].clone().sub(v[0]));
+      Vector3 faceNormal = v[1].clone().sub(v[0]).cross(v[2].clone().sub(v[0])).normalize();
       mesh.normals.get(face.positions[0]).add(faceNormal);
       mesh.normals.get(face.positions[1]).add(faceNormal);
       mesh.normals.get(face.positions[2]).add(faceNormal);

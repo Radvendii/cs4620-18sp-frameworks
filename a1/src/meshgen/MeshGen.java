@@ -1,3 +1,5 @@
+package meshgen;
+
 import math.Vector2;
 import math.Vector3;
 import meshgen.OBJFace;

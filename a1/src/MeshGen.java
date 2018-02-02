@@ -6,18 +6,48 @@ import java.io.IOException;
 class MeshGen {  
   public static void main(String args[]) throws IOException {
     Args pArgs = new Args(args);
-    
-    switch(Args.g){
-      case CYLINDER:
-        cylinder(pArgs.n).writeOBJ(pArgs.o);
-        break;
-      case SPHERE:
-        sphere(pArgs.n, pArgs.m).writeOBJ(pArgs.o);
-        break;
-      default:
-        System.exit(-1);
+
+    if(Args.i != null){
+      OBJMesh mesh = new OBJMesh();
+      mesh.parseOBJ(pArgs.i);
+      addNormals(mesh);
+      mesh.writeOBJ(pArgs.o);
+    } else{
+      switch(Args.g){
+        case CYLINDER:
+          cylinder(pArgs.n).writeOBJ(pArgs.o);
+          break;
+        case SPHERE:
+          sphere(pArgs.n, pArgs.m).writeOBJ(pArgs.o);
+          break;
+      }
     }
   }
+
+  public static void addNormals(OBJMesh mesh){
+    for(int i=0;i<mesh.positions.size();i++){
+      mesh.normals.add(new Vector3());
+    }
+    for(OBJFace face: mesh.faces){
+      Vector3[] v = new Vector3[3];
+      face.normals = new int[3];
+      for(int i=0; i<3; i++){
+        face.normals[i] = face.positions[i];
+        v[i] = mesh.positions.get(face.positions[i]);
+      }
+      Vector3 faceNormal = v[1].clone().sub(v[0]).cross(v[2].clone().sub(v[0]));
+      mesh.normals.get(face.positions[0]).add(faceNormal);
+      mesh.normals.get(face.positions[1]).add(faceNormal);
+      mesh.normals.get(face.positions[2]).add(faceNormal);
+    }
+    Vector3 comp = new Vector3();
+    for(Vector3 n: mesh.normals){
+      if(!n.equals(comp)){
+        n.normalize();
+      }
+    }
+  }
+
 
   public static OBJMesh cylinder(int n){
     //vertices will be 2x(n+1) array, denoting the point in the center followed by the circle, top face then bottom face

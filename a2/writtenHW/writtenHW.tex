@@ -1,0 +1,92 @@
+\documentclass[11pt, oneside]{article}
+\usepackage{latexrc}
+
+\title{Written Part of Ray 1 HW}
+\author{Taeer Bar-Yam (tb442) \and Nayanathara Palanivel (np372)}
+% \date{} % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+\begin{enumerate}[Q1.]
+  \item A group of astronauts has just left on their journey to Mars when ground control informs them that there will be a lunar eclipse back home. The astronauts are asked to take a picture of this rare event from their location in space and report back. The situation at the moment they take the picture is as follows:\\
+Note that we use Earth-centered coordinates that match the ones for the sphere in the mesh assignment. So $1$ Earth radius is the unit of measure.
+\begin{itemize}
+  \item The sun is positioned $23,679$ units away from the Earth (from the center, if you must ask), exactly above the point at latitude and longitude zero, at $(0, 0, 23679)$.
+  \item The moon is positioned at $(0, 1, -10)$ units away from the center of the earth. It has radius 0.15.
+  \item The spacecraft is at $(15, 0, 20)$ and its camera is looking in the direction $\left(-\frac 3 5, 0, -\frac 4 5\right)$ (which is the ray through the very center of the image)
+\end{itemize}
+  \begin{enumerate}[1)]
+    \item Ray Intersection and Shadow Ray
+    \begin{enumerate}[a.]
+      \item In the astronauts' photo, what $(x, y, z)$ point on the Earth's surface appears exactly at the center of the image? Check your work by showing that the point is both on the ray and on the surface of the Earth (plug the point into the ray and sphere equations). See Sec. $4.4.1$ of the textbook.
+       
+        The ray of the camera is $\lambda r.\;\;(15,0,20) + r(-3, 0, -4)$, where $r>0$, or in other words $(15-3r, 0, 20-4r)$. We want the point on this ray that intersects the unit sphere, i.e. where it also satisfies the equation $\sqrt{x^2+y^2+z^2}=1$. So we want to find a solution to the equation $\sqrt{{(15-3r)}^2 + 0 + {(20-4r)}^2}=1$. The solutions to this are at $r=\frac{24}{5}$ and $r=\frac{26}{5}$. The nearer point is at $r=\frac{24}{5}$. Plugging that back into the ray we get $\left(\frac 3 5, 0, \frac{4}{5}\right)$, for the point on the earth that is seen at the center of the camera.
+
+      \item Is the point $(0, .91, -9.88)$ on the moon in the shadow of the Earth? You can approximate the direction from the point to the sun as $(0, 0, 1)$.
+
+        To find if the point is in the Earth's shadow, we find the ray from the sun to the point on the moon, and see if that is blocked (passes through) the Earth.\\
+        The ray is defined by the equation $\lambda r.\;\;(0, 0.91, -9.88) + r(0,0,1)$. To see if it intersects with the Earth, we plug it into the equation for points on the unit sphere $\sqrt{x^2+y^2+z^2}=1$, yielding $\sqrt{0 + (0.91+0)^2 + (-9.88+r)^2} = 1$. The solutions to this equation are $r=9.4654$ and $r=10.2946$. The fact that this has non-imaginary solutions beans that there is in fact an intersection with the earth, and so the earth would cast a shadow on it.
+    \end{enumerate}
+  \item
+    \begin{enumerate}[a.]
+      \item Let's assume for this question that colors only have one component (reflectance) instead of three RGB components. Let the point on the Earth at the center of the image be $P$ (calculated above). If the intensity of the sun is $100,000,000$ units and we assume only diffuse reflectance from the Earth, with diffuse coefficient $0.5$ at $P$. What is the light reflected from $P$ toward the camera? Again, you can approximate the light direction as $(0, 0, 1)$.
+
+        Supposing that there is only diffuse reflection.
+
+        The angle between $(0,0,1)$ and $\left(\frac 3 5, 0, \frac 4 5\right)$, hereafter called $\theta$, can be calculated using the dot product
+        The reflected light is calculated according to the formula $$(\mathrm{illumination})(\mathrm{diffuse\; coefficient})((\mathrm{incoming\; angle})\cdot(\mathrm{surface\; normal}))$$ which is $$\left(100,000,000\right)\left(0.5\right)\left(\left(0,0,1\right)\cdot\left(\frac 3 5, 0, \frac 4 5\right)\right) = (50,000,000)\left(\frac 4 5\right) = 40,000,000$$ so we have $40,000,000$ units of brightness reflected.
+    \end{enumerate}
+  \end{enumerate}
+\item Normal Interpolation
+
+  Suppose we have a regular tetrahedron with edge length $2$, centered at the origin. The coordinates of the $4$ vertices are $A\; \left(0,-1,\frac 1 {\sqrt 2}\right)$, $B\; \left(1,0,-\frac 1 {\sqrt 2}\right)$, $C\; \left(-1, 0, -\frac 1 {\sqrt 2}\right)$, $D\; \left(0, 1, \frac 1 {\sqrt 2}\right)$. Let $E$ be a point on face $ABD$, and the ratio of the distance from $E$ to edge $AB$, edge $AD$ and edge $BD$ is $1:1:4$. If we define vertex normal to be the average of the neighboring triangles' normals, and use linear (barycentric) interpolation (See textbook sec 2.7) of vertex normals for shading, what is the unit outward-pointing normal we use at $E$?
+
+  Calculating the face normals:
+  \begin{align*}
+    \vec{n}_{ABD} &= \mathrm{normalize}\left(\left(\left(1,0,-\frac 1 {\sqrt 2}\right) - \left(0,-1,\frac 1 {\sqrt 2} \right)\right)\times\left(\left(0,1,\frac 1 {\sqrt 2}\right) - \left(0,-1,\frac 1 {\sqrt 2} \right)\right)\right)\\
+                  &= \mathrm{normalize}\left(2\sqrt 2, 0, 2\right)\\
+                  &= \left(\sqrt{\frac 2 3}, 0, \frac 1 {\sqrt 3}\right)\\
+    \vec{n}_{BAC} &= \mathrm{normalize}\left(\left(\left(0,-1,\frac 1 {\sqrt 2}\right) - \left(1,0,-\frac 1 {\sqrt 2} \right)\right)\times\left(\left(-1,0,-\frac 1 {\sqrt 2}\right) - \left(1,0,-\frac 1 {\sqrt 2} \right)\right)\right)\\
+                  &= \mathrm{normalize}\left(0,-2\sqrt 2, -2\right)\\
+                  &= \left(0, -\sqrt{\frac 2 3}, -\frac 1 {\sqrt 3}\right)\\
+    \vec{n}_{CDB} &= \mathrm{normalize}\left(\left(\left(0,1,\frac 1 {\sqrt 2}\right) - \left(-1,0,-\frac 1 {\sqrt 2} \right)\right)\times\left(\left(1,0,-\frac 1 {\sqrt 2}\right) - \left(-1,0,-\frac 1 {\sqrt 2} \right)\right)\right)\\
+                  &= \mathrm{normalize}\left(0, 2\sqrt 2, -2\right)\\
+                  &= \left(0, \sqrt{\frac 2 3}, -\frac 1 {\sqrt 3}\right)\\
+    \vec{n}_{DCA} &= \mathrm{normalize}\left(\left(\left(-1,0,-\frac 1 {\sqrt 2}\right) - \left(0,1,\frac 1 {\sqrt 2} \right)\right)\times\left(\left(0,-1,\frac 1 {\sqrt 2}\right) - \left(0,1,\frac 1 {\sqrt 2} \right)\right)\right)\\
+                  &= \mathrm{normalize}\left(-2\sqrt 2, 0, 2\right)\\
+                  &= \left(-\sqrt{\frac 2 3}, 0, \frac 1 {\sqrt 3}\right)
+  \end{align*}
+
+  And the vertex normals:
+  \begin{align*}
+    \vec{n}_A &= \mathrm{normalize}\left(\vec{n}_{ABD} + \vec{n}_{BAC} + \vec{n}_{DCA}\right) \\
+              &= \left(0, -\sqrtfrac 2 3, \frac 1 {\sqrt 3}\right)\\
+    \vec{n}_B &= \mathrm{normalize}\left(\vec{n}_{ABD} + \vec{n}_{BAC} + \vec{n}_{CDB}\right) \\
+              &= \left(\sqrtfrac 2 3, 0, -\frac 1 {\sqrt 3}\right)\\
+    \vec{n}_C &= \mathrm{normalize}\left(\vec{n}_{BAC} + \vec{n}_{CDB} + \vec{n}_{DCA}\right) \\
+              &= \left(-\sqrtfrac 2 3, 0, -\frac 1 {\sqrt 3}\right)\\
+    \vec{n}_D &= \mathrm{normalize}\left(\vec{n}_{ABD} + \vec{n}_{CDB} + \vec{n}_{DCA}\right) \\
+              &= \left(0, \sqrtfrac 2 3, \frac 1 {\sqrt 3}\right)
+  \end{align*}
+
+  We want to find the barycentric coordinates $\alpha$, $\beta$, and $\gamma$ such that $\alpha A + \beta B + \delta D = E$, and $\alpha + \beta + \delta = 1$. This gives us one equation, and the problem gives us two more. Altogether we have:
+  \begin{align*}
+    \beta &= \delta\\
+    \beta &= \frac 1 4 \alpha\\
+    \alpha + \beta + \delta &= 1
+  \end{align*}
+  Plugging the first two equations into the third, we get $6\beta = 1 \thus \beta = \frac 1 6$, giving us finally
+  \begin{align*}
+    \alpha &= \frac 2 3\\
+    \beta &= \frac 1 6\\
+    \delta &= \frac 1 6
+  \end{align*}
+  \begin{align*}
+    \vec{n}_E &= \mathrm{normalize}\left(\alpha\vec{n}_A + \beta\vec{n}_B + \delta\vec{n}_D\right)\\
+              &= \mathrm{normalize}\left(\frac 2 3\left(0, -\sqrtfrac 2 3, \frac 1 {\sqrt 3}\right) + \frac 1 6\left(\sqrtfrac 2 3, 0, -\frac 1 {\sqrt 3}\right) + \frac 1 6\left(0, \sqrtfrac 2 3, \frac 1 {\sqrt 3}\right)\right)\\
+              &= \mathrm{normalize}\left(\frac 1 {3\sqrt 6},-\frac 1 {\sqrt 6}, \frac 2 {3\sqrt 3} \right)\\
+              &= \left(\frac 1 {3\sqrt 2},-\frac 1 {\sqrt 2}, \frac 2 3 \right)
+  \end{align*}
+\end{enumerate}
+
+\end{document}

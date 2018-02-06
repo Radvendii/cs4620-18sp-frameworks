@@ -1,5 +1,7 @@
 package ray1.camera;
 
+import egl.math.Vector3;
+import egl.math.Vector3d;
 import ray1.Ray;
 
 public class OrthographicCamera extends Camera {
@@ -16,9 +18,9 @@ public class OrthographicCamera extends Camera {
      * Initialize the derived view variables to prepare for using the camera.
      */
     public void init() {
-      self.w = -self.viewDir;
-      self.u = self.w.copy().cross(self.viewUp).normalize();
-      self.v = self.w.copy().cross(self.u);
+      w = viewDir.clone().negate();
+      u = viewUp.clone().cross(w).normalize();
+      v = w.clone().cross(u).normalize();
 
         // TODO#A2: Fill in this function.
         // 1) Set the 3 basis vectors in the orthonormal basis, 
@@ -35,8 +37,8 @@ public class OrthographicCamera extends Camera {
      * @param inV The v coord of the image point (range [0,1])
      */
     public void getRay(Ray outRay, float inU, float inV) {
-      outRay.origin.set(self.u.copy().setMultiple(self.viewWidth, inU, inU, inU).add(self.v.copy().setMultiple(self.viewHeight, inV, inV, inV)));
-      outRay.direction.set(self.w.copy().negate());
+      outRay.origin.set(viewPoint.clone().add(u.clone().mul(viewWidth * (2*inU-1)).add(v.clone().mul(viewHeight * (2*inV-1)))));
+      outRay.direction.set(w.clone().negate());
         // TODO#A2: Fill in this function.
         // 1) Transform inU so that it lies between [-viewWidth / 2, +viewWidth / 2] 
         //    instead of [0, 1]. Similarly, transform inV so that its range is

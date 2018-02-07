@@ -18,7 +18,7 @@ public class OrthographicCamera extends Camera {
      * Initialize the derived view variables to prepare for using the camera.
      */
     public void init() {
-      w = viewDir.clone().negate();
+      w = viewDir.clone().negate().normalize();
       u = viewUp.clone().cross(w).normalize();
       v = w.clone().cross(u).normalize();
 
@@ -37,7 +37,7 @@ public class OrthographicCamera extends Camera {
      * @param inV The v coord of the image point (range [0,1])
      */
     public void getRay(Ray outRay, float inU, float inV) {
-      outRay.origin.set(viewPoint.clone().add(u.clone().mul(viewWidth * (2*inU-1)).add(v.clone().mul(viewHeight * (2*inV-1)))));
+      outRay.origin.set(viewPoint.clone().add(u.clone().mul(viewWidth / 2 * (2*inU-1)).add(v.clone().mul(viewHeight / 2 * (2*inV-1)))));
       outRay.direction.set(w.clone().negate());
         // TODO#A2: Fill in this function.
         // 1) Transform inU so that it lies between [-viewWidth / 2, +viewWidth / 2] 

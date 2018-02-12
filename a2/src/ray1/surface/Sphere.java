@@ -46,23 +46,13 @@ public class Sphere extends Surface {
     // direction = 0,0,1
     // intersection should be at (0,5,-2)
     double p = rayIn.direction.dot(oMinC);
-    System.out.print("p (-3): ");
-    System.out.println(p);
     double c = oMinC.lenSq() - Math.pow(radius, 2);
-    System.out.print("c (5): ");
-    System.out.println(c);
     double discr = Math.pow(p, 2) - c;
-    System.out.print("discr (4): ");
-    System.out.println(discr);
     if(discr<0){
       return false;
     }
     double t1 = -p + Math.sqrt(discr);
-    System.out.print("t1 (5): ");
-    System.out.println(t1);
     double t2 = -p - Math.sqrt(discr);
-    System.out.print("t2 (1): ");
-    System.out.println(t2);
     double t;
     // outRecord.t = -p - Math.sqrt(discr);
     if(t2<rayIn.start){

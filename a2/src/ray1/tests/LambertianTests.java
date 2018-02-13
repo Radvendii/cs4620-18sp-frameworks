@@ -4,6 +4,8 @@ import org.junit.Test;
 
 import egl.math.Colorf;
 import egl.math.Vector3;
+import egl.math.Vector3d;
+
 import ray1.IntersectionRecord;
 import ray1.Light;
 import ray1.Ray;
@@ -31,12 +33,13 @@ public class LambertianTests {
         light0.setPosition(new Vector3(5.0f, 5.0f, 5.0f));
         scene.addLight(light0);
         Colorf outIntensity = new Colorf();
-        Ray ray = new Ray();
+        Ray ray = new Ray(new Vector3d(0,2,0), new Vector3d(0,-1,0));
         Colorf expectedIntensity = new Colorf();
 
         System.out.println("Testing not shadowed.");
         shader.shade(outIntensity, scene, ray, its);
         expectedIntensity.set(0.0f, 0.37300451811919006f, 0.3730045181191900f);
+        expectedIntensity.div((float)Math.PI);
         TestUtils.assertVector3Equal(outIntensity, expectedIntensity);
 
         System.out.println("Testing shadowed.");
@@ -45,6 +48,8 @@ public class LambertianTests {
         scene.addSurface(occluder);
         shader.shade(outIntensity, scene, ray, its);
         expectedIntensity.set(0.0f, 0.0f, 0.0f);
+        expectedIntensity.div((float)Math.PI);
+        
         TestUtils.assertVector3Equal(outIntensity, expectedIntensity);
 
         System.out.println("All tests passed.\n");
@@ -79,12 +84,13 @@ public class LambertianTests {
         scene.addLight(light1);
 
         Colorf outIntensity = new Colorf();
-        Ray ray = new Ray();
+        Ray ray = new Ray(new Vector3d(0,2,0), new Vector3d(0,-1,0));
         Colorf expectedIntensity = new Colorf();
 
         System.out.println("Testing not shadowed.");
         shader.shade(outIntensity, scene, ray, its);
         expectedIntensity.set(0.0f, 2.24800451811919f, 3.49800451811919f);
+        expectedIntensity.div((float)Math.PI);
         TestUtils.assertVector3Equal(outIntensity, expectedIntensity);
 
         System.out.println("Testing shadowed.");
@@ -93,6 +99,7 @@ public class LambertianTests {
         scene.addSurface(occluder);
         shader.shade(outIntensity, scene, ray, its);
         expectedIntensity.set(0.0f, 1.875f, 3.125f);
+        expectedIntensity.div((float)Math.PI);
         TestUtils.assertVector3Equal(outIntensity, expectedIntensity);
 
         System.out.println("All tests passed.\n");

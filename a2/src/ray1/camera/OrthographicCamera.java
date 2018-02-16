@@ -5,15 +5,15 @@ import egl.math.Vector3d;
 import ray1.Ray;
 
 public class OrthographicCamera extends Camera {
-  public static Vector3 u;
-  public static Vector3 v;
-  public static Vector3 w;
+
 
     //TODO#A2: create necessary new variables/objects here, including an orthonormal basis
     //          formed by three basis vectors and any other helper variables 
     //          if needed.
     
-    
+	  public static Vector3 u;
+	  public static Vector3 v;
+	  public static Vector3 w;    
     /**
      * Initialize the derived view variables to prepare for using the camera.
      */
@@ -37,9 +37,7 @@ public class OrthographicCamera extends Camera {
      * @param inV The v coord of the image point (range [0,1])
      */
     public void getRay(Ray outRay, float inU, float inV) {
-      outRay.origin.set(viewPoint.clone().add(u.clone().mul(viewWidth / 2 * (2*inU-1)).add(v.clone().mul(viewHeight / 2 * (2*inV-1)))));
-      outRay.direction.set(w.clone().negate());
-        // TODO#A2: Fill in this function.
+      // TODO#A2: Fill in this function.
         // 1) Transform inU so that it lies between [-viewWidth / 2, +viewWidth / 2] 
         //    instead of [0, 1]. Similarly, transform inV so that its range is
         //    [-vieHeight / 2, +viewHeight / 2]
@@ -47,6 +45,10 @@ public class OrthographicCamera extends Camera {
         //    In an orthographic camera, the origin should depend on your transformed
         //    inU and inV and your basis vectors u and v.
         // 3) Set the direction field of outRay for an orthographic camera.
+    	
+    	outRay.origin.set(viewPoint.clone().add(u.clone().mul(viewWidth / 2 * (2*inU-1)).add(v.clone().mul(viewHeight / 2 * (2*inV-1)))));
+        outRay.direction.set(w.clone().negate());
+        outRay.makeOffsetRay();
         
     }
 

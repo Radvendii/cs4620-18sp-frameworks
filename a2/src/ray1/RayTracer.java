@@ -250,6 +250,7 @@ public class RayTracer {
 		// 2) Get the shader from the intersection record.
 		// 3) Call the shader's shade() method to set the color for this ray.
           IntersectionRecord iRec = new IntersectionRecord();
+          ray.end = Double.POSITIVE_INFINITY;
           if(!scene.getFirstIntersection(iRec, ray)){
             outColor.set(scene.getBackColor());
           }

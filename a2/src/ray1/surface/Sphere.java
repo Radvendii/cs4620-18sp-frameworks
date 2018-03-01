@@ -40,11 +40,6 @@ public class Sphere extends Surface {
     Vector3d oMinC = rayIn.origin.clone().sub(center);
     // using the quadratic equation x = (-p +- sqrt(p^2 - ac)) / a, where p = b/2
     // in this case, a = 1, so it can be ignored
-    // center = 0,5,0
-    // radius = 2
-    // origin = 0,5,-3
-    // direction = 0,0,1
-    // intersection should be at (0,5,-2)
     double p = rayIn.direction.dot(oMinC);
     double c = oMinC.lenSq() - Math.pow(radius, 2);
     double discr = Math.pow(p, 2) - c;
@@ -54,7 +49,6 @@ public class Sphere extends Surface {
     double t1 = -p + Math.sqrt(discr);
     double t2 = -p - Math.sqrt(discr);
     double t;
-    // outRecord.t = -p - Math.sqrt(discr);
     if(t2<rayIn.start){
       if(t1<rayIn.start){
         return false;
@@ -68,7 +62,7 @@ public class Sphere extends Surface {
       return false;
     }
     outRecord.t = t;
-    outRecord.location.set(rayIn.origin.clone().add(rayIn.direction.clone().mul(outRecord.t)));
+    rayIn.evaluate(outRecord.location, t);
     outRecord.normal.set(outRecord.location.clone().sub(center).normalize());
     double v = outRecord.normal.angle(new Vector3d(0,-1,0)) / Math.PI;
     double u;
@@ -76,7 +70,11 @@ public class Sphere extends Surface {
       u = 0;
     }
     else{
-      u = outRecord.normal.clone().sub(new Vector3d(0, outRecord.normal.y, 0)).angle(new Vector3d(0,0,-1)) / M_2PI + (outRecord.normal.x < 0 ? 0.5 : 0);
+      u = outRecord.normal.clone().sub(new Vector3d(0, outRecord.normal.y, 0)).angle(new Vector3d(0,0,-1)) / Math.PI;
+      if(outRecord.normal.x < 0){
+        u = 2.0 - u;
+      }
+      u = u / 2.0;
     }
     outRecord.texCoords.set(new Vector2d(u, v));
     outRecord.surface = this;

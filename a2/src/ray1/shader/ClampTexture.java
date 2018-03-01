@@ -2,6 +2,7 @@ package ray1.shader;
 
 import ray1.shader.Texture;
 import egl.math.Colorf;
+import egl.math.Color;
 import egl.math.Vector2;
 
 /**
@@ -17,6 +18,16 @@ public class ClampTexture extends Texture {
 			System.err.println("Warning: Texture uninitialized!");
 			return new Colorf();
 		}
+                int x = (int)(texCoord.x * image.getWidth() + 0.5);
+                int y = (int)(texCoord.y * image.getHeight() + 0.5);
+                if(x < 0) {x = 0;}
+                if(y < 0) {y = 0;}
+                if(x > image.getWidth()-1) {x = image.getWidth()-1;}
+                if(y > image.getHeight()-1) {y = image.getHeight()-1;}
+                y = image.getHeight() - y;
+		int c = image.getRGB(x, y);
+		return new Colorf(Color.fromIntRGB(c));
+
 				
 		// TODO#A2 Fill in this function.
 		// 1) Convert the input texture coordinates to integer pixel coordinates. Adding 0.5
@@ -27,7 +38,6 @@ public class ClampTexture extends Texture {
 		// NOTE: By convention, UV coordinates specify the lower-left corner of the image as the
 		//    origin, but the ImageBuffer class specifies the upper-left corner as the origin.
 			
-		return new Colorf(0,0,0);
 	}
 
 }

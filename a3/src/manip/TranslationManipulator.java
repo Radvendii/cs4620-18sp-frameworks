@@ -47,6 +47,7 @@ public class TranslationManipulator extends Manipulator {
     //   for both X and Y. That is, the origin is the center of the screen, (-1,-1) is the bottom left
     //   corner of the screen, and (1, 1) is the top right corner of the screen.
     Vector3 axis = new Vector3(this.axis == ManipulatorAxis.X ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Y ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Z ? 1.0f : 0.0f);
+    Vector3 axisT = getReferencedTransform().mulDir(axis);
 
     Matrix4 viewToWorld = viewProjection.clone().invert();
 
@@ -60,17 +61,17 @@ public class TranslationManipulator extends Manipulator {
       mWorld[i] = viewToWorld.mulPos(new Vector3(mView[i].x, mView[i].y, -1.0f));
       mDir[i] = viewToWorld.mulPos(new Vector3(mView[i].x, mView[i].y, -0.8f)).sub(mWorld[i]);
     }
-    Vector3 toNear = viewToWorld.mulDir(new Vector3(0.0f,0.0f,1.0f)).normalize();
-    Vector3 perp = toNear.clone().cross(axis).normalize();
     Vector3 manipOrig = getReferencedTransform().mulPos(new Vector3());
+    Vector3 toNear = viewToWorld.mulDir(new Vector3(0.0f,0.0f,1.0f)).normalize();
+    Vector3 perp = toNear.clone().cross(axisT).normalize();
 
     Vector3[] sol = new Vector3[2];
     for(int i=0; i<2; i++){
       sol[i] = cramer(
           new Matrix3(
-            axis.x, perp.x, -mDir[i].x,
-            axis.y, perp.y, -mDir[i].y,
-            axis.z, perp.z, -mDir[i].z),
+            axisT.x, perp.x, -mDir[i].x,
+            axisT.y, perp.y, -mDir[i].y,
+            axisT.z, perp.z, -mDir[i].z),
           mWorld[i].clone().sub(manipOrig));
     }
 

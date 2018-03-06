@@ -108,9 +108,6 @@ public class RotationManipulator extends Manipulator {
     if(Math.abs(ang) < 0.0001 || Float.isNaN(ang)){
       return;
     }
-    System.out.println(sol2[0]);
-    System.out.println(sol2[1]);
-    System.out.println(ang);
 
 
     switch (this.axis) {

@@ -65,9 +65,7 @@ public class RotationManipulator extends Manipulator {
     //   for both X and Y. That is, the origin is the center of the screen, (-1,-1) is the bottom left
     //   corner of the screen, and (1, 1) is the top right corner of the screen.
     Vector3 axis = new Vector3(this.axis == ManipulatorAxis.X ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Y ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Z ? 1.0f : 0.0f);
-    Vector3 otherAxis = new Vector3(this.axis == ManipulatorAxis.Y ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Z ? 1.0f : 0.0f, this.axis == ManipulatorAxis.X ? 1.0f : 0.0f);
     Vector3 axisT = getReferencedTransform().mulDir(axis);
-    Vector3 otherAxisT = getReferencedTransform().mulDir(otherAxis);
 
     Matrix4 viewToWorld = viewProjection.clone().invert();
 
@@ -82,12 +80,13 @@ public class RotationManipulator extends Manipulator {
       mDir[i] = viewToWorld.mulPos(new Vector3(mView[i].x, mView[i].y, -0.8f)).sub(mWorld[i]);
     }
     Vector3 manipOrig = getReferencedTransform().mulPos(new Vector3());
-    Vector3 e1 = axisT.clone().cross(otherAxisT);
+    Vector3 otherVector = getReferencedTransform().mulDir(new Vector3(1.0f)); //just needs to be not a multiple of axisT or (0,0,0)
+    Vector3 e1 = axisT.clone().cross(otherVector);
+    Vector3 e2 = axisT.clone().cross(e1);
 
-    if(Math.abs(mDir[0].dot(axisT)) < 0.001 || Math.abs(mDir[1].dot(axisT)) < 0.001){
+    if(Math.abs(mDir[0].dot(axisT)) < 0.0001 || Math.abs(mDir[1].dot(axisT)) < 0.0001){ // make sure we are not looking parallel to the rotation plane
       return;
     }
-    Vector3 e2 = axisT.clone().cross(e1);
 
     Vector3[] sol = new Vector3[2];
     for(int i=0; i<2; i++){
@@ -99,24 +98,30 @@ public class RotationManipulator extends Manipulator {
           mWorld[i].clone().sub(manipOrig));
     }
 
-    Vector3[] sol2 = new Vector3[2];
+    Vector3[] sol2 = new Vector3[2]; // Vector pointing from the manipulator to where the mouse was clicked on the rotation plane
     for(int i=0; i<2; i++){
-      sol2[i] = mWorld[i].add(mDir[i].clone().mul(sol[i].z));
+      sol2[i] = mWorld[i].add(mDir[i].clone().mul(sol[i].z)).sub(manipOrig);
     }
 
-    float sign = (int)Math.signum(sol2[0].clone().cross(sol2[1]).dot(axisT));
+    float sign = Math.signum(sol2[0].clone().cross(sol2[1]).dot(axisT));
     float ang = sign * sol2[0].angle(sol2[1]);
+    if(Math.abs(ang) < 0.0001 || Float.isNaN(ang)){
+      return;
+    }
+    System.out.println(sol2[0]);
+    System.out.println(sol2[1]);
+    System.out.println(ang);
 
 
     switch (this.axis) {
       case X:
-        this.reference.rotationX.mulAfter(Matrix4.createRotationX(ang));
+        this.reference.rotationX.mulBefore(Matrix4.createRotationX(ang));
         break;
       case Y:
-        this.reference.rotationY.mulAfter(Matrix4.createRotationY(ang));
+        this.reference.rotationY.mulBefore(Matrix4.createRotationY(ang));
         break;
       case Z:
-        this.reference.rotationZ.mulAfter(Matrix4.createRotationZ(ang));
+        this.reference.rotationZ.mulBefore(Matrix4.createRotationZ(ang));
         break;
     }
 

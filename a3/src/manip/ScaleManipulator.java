@@ -51,7 +51,7 @@ public class ScaleManipulator extends Manipulator {
     //   for both X and Y. That is, the origin is the center of the screen, (-1,-1) is the bottom left
     //   corner of the screen, and (1, 1) is the top right corner of the screen.
     Vector3 axis = new Vector3(this.axis == ManipulatorAxis.X ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Y ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Z ? 1.0f : 0.0f);
-    Vector3 axisT = getReferencedTransform().mulDir(axis);
+    Vector3 axisT = getReferencedTransform().mulDir(axis.clone());
 
     Matrix4 viewToWorld = viewProjection.clone().invert();
 
@@ -81,8 +81,7 @@ public class ScaleManipulator extends Manipulator {
 
     float sc = sol[1].x / sol[0].x;
 
-    this.reference.scale.mulAfter(Matrix4.createScale(axis.clone().mul(sc).add(new Vector3(1.0f)).sub(axis)));
-
+    this.reference.scale.mulBefore(Matrix4.createScale(axis.clone().mul(sc).add(new Vector3(1.0f)).sub(axis)));
   }
 
   @Override

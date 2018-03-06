@@ -77,7 +77,7 @@ public class TranslationManipulator extends Manipulator {
 
     float tr = sol[1].x - sol[0].x;
 
-    this.reference.translation.mulAfter(Matrix4.createTranslation(axis.mul(tr)));
+    this.reference.translation.mulBefore(Matrix4.createTranslation(axis.mul(tr)));
   }
 
   @Override

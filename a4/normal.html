@@ -46,7 +46,7 @@
         <script src="js/Detector.js"></script>
         <script src="js/OrbitControls.js"></script>
         <script src="js/OBJLoader.js"></script>
-<!-----------------------------------------------------------------------------
+<!---------------------------------------------------------------------------
         VERTEX SHADER
 ------------------------------------------------------------------------------>
         <script id="vertexShader" type="x-shader/x-vertex">
@@ -73,6 +73,11 @@
 // attribute vec3 position;
 // attribute vec3 normal;
 // attribute vec2 uv;
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
+varying vec3 vTangent;
+varying vec3 vTangent2;
 
 attribute vec3 tangent;  // In object space.
 attribute vec3 tangent2; // In object space.
@@ -80,11 +85,19 @@ attribute vec3 tangent2; // In object space.
 // TODO#A4: Declare any varyings here.
 
 void main() {
-    // TODO#A4: Compute gl_Position, as well as any varyings you need in the fragment shader.
-    gl_Position = vec4(1.0); // placeholder
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    // We have to use the inverse transpose of the modelview matrix for the normal.
+    vNormal = normalize((normalMatrix * normal).xyz);
+    vUv = uv;
+    vTangent = normalize((modelViewMatrix * vec4(tangent, 0)).xyz);
+    vTangent2 = normalize((modelViewMatrix * vec4(tangent2, 0)).xyz);
 }
         </script>
-<!-----------------------------------------------------------------------------
+<!---------------------------------------------------------------------------
         FRAGMENT SHADER
 ------------------------------------------------------------------------------>
         <script id="fragmentShader" type="x-shader/x-fragment">
@@ -99,14 +112,39 @@ uniform sampler2D diffuseTexture; // k_d, the diffuse color. Use texture2D to lo
 uniform sampler2D normalMap; // Subtract 0.5 from each component to get the tangent, tangent2, and normal weights.
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // Fragment UV coordinates.
+varying vec3 vNormal; // Fragment normal in eye space.
+varying vec4 vPosition; // Fragment position in eye space.
+varying vec3 vTangent;
+varying vec3 vTangent2;
+
 
 vec3 to_sRGB(vec3 c) { return pow(c, vec3(1.0/2.2)); }
 vec3 from_sRGB(vec3 c) { return pow(c, vec3(2.2)); }
 
 void main() {
-    // TODO#A4: Implement the reflectance function here using the normal computed from the normalMap, 
-    // adjusted by the bumpiness uniform. Either Phong or Cook-Torrance is fine.
-    gl_FragColor = vec4(1.0); // placeholder
+    vec3 normalRGB = texture2D(normalMap, vUv).rgb;
+
+    vec3 N = normalize(vTangent * (normalRGB.r - 0.5) * bumpiness + vTangent2 * (normalRGB.g - 0.5) * bumpiness + vNormal * (normalRGB.b - 0.5));
+    //vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vPosition.xyz);
+    
+    vec3 finalColor = vec3(0.0, 0.0, 0.0);
+
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+        float r = length(lightPositions[i] - vPosition.xyz);
+        vec3 L = normalize(lightPositions[i] - vPosition.xyz); 
+        vec3 H = normalize(L + V);
+
+        // calculate diffuse term
+        vec3 Idiff = from_sRGB(texture2D(diffuseTexture, vUv).rgb) * max(dot(N, L), 0.0);
+
+        // calculate specular term
+        vec3 Ispec = vec3(1.0) * pow(max(dot(N, H), 0.0), 1.0 / roughness);
+
+        finalColor += lightColors[i] * (Idiff + Ispec) / (r*r);
+    }
+    gl_FragColor = vec4(to_sRGB(finalColor * exposure), 1.0);
 }
         </script>
 <!-----------------------------------------------------------------------------

@@ -45,32 +45,34 @@
 // Built-ins provided by Three.js:
 // = object.matrixWorld
 // uniform mat4 modelMatrix;
-
 // = camera.matrixWorldInverse * object.matrixWorld
 // uniform mat4 modelViewMatrix;
-
 // = camera.projectionMatrix
 // uniform mat4 projectionMatrix;
-
 // = camera.matrixWorldInverse
 // uniform mat4 viewMatrix;
-
 // = inverse transpose of modelViewMatrix
 // uniform mat3 normalMatrix;
-
 // = camera position in world space
 // uniform vec3 cameraPosition;
-
 // RenderMesh Input
 // attribute vec3 position;
 // attribute vec3 normal;
 // attribute vec2 uv;
-
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
 
 void main() {
-    // TODO#A4: Compute gl_Position, as well as any varyings you need in the fragment shader.
-    gl_Position = vec4(1.0); // placeholder
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    // We have to use the inverse transpose of the modelview matrix for the normal.
+    vNormal = normalize((normalMatrix * normal).xyz);
+    vUv = uv;
 }
         </script>
 <!-----------------------------------------------------------------------------
@@ -78,18 +80,25 @@ void main() {
 ------------------------------------------------------------------------------>
         <script id="fragmentShader" type="x-shader/x-fragment">
 uniform float exposure; // Multiply the final color by this.
-
 uniform samplerCube environmentMap; // Use samplerCube to look up into this.
-
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // Fragment UV coordinates.
+varying vec3 vNormal; // Fragment normal in eye space.
+varying vec4 vPosition; // Fragment position in eye space.
 
 vec3 to_sRGB(vec3 c) { return pow(c, vec3(1.0/2.2)); }
 vec3 from_sRGB(vec3 c) { return pow(c, vec3(2.2)); }
 
 void main() {
     // TODO#A4: Implement the mirror reflection here.
-    gl_FragColor = vec4(1.0); // placeholder
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vPosition.xyz);
+    vec3 ref = (2.0*dot(N,V)*N) - V;
+    vec3 finalColor = from_sRGB(textureCube(environmentMap, ref).rgb);
+
+    gl_FragColor = vec4(to_sRGB(finalColor * exposure), 1.0); // placeholder
 }
+
         </script>
 <!-----------------------------------------------------------------------------
         END SHADERS

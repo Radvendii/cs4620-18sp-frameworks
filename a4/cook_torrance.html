@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Cook-Torrance reflectance</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-        <style>
-            body {
-                font-family: Monospace;
-                background-color: #707080;
-                margin: 0px;
-                overflow: hidden;
-            }
-        </style>
-    </head>
-    <body>
+<head>
+    <title>Cook-Torrance reflectance</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+    body {
+        font-family: Monospace;
+        background-color: #707080;
+        margin: 0px;
+        overflow: hidden;
+    }
+</style>
+</head>
+<body>
     <div id="container">
         <div id="controlBar" style="text-align: center;">
             <input type="file" id="meshInputFile" style="display: none;" onchange="loadFile(this.files[0])">
@@ -36,15 +36,15 @@
         </div>
     </div>
 
-        <script src="js/three.min.js"></script>
-        <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r84/three.min.js"></script> -->
-        <script src="js/BufferGeometryUtils.js"></script>
-        <script src="js/Detector.js"></script>
-        <script src="js/OrbitControls.js"></script>
-        <script src="js/OBJLoader.js"></script>
+    <script src="js/three.min.js"></script>
+    <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r84/three.min.js"></script> -->
+    <script src="js/BufferGeometryUtils.js"></script>
+    <script src="js/Detector.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/OBJLoader.js"></script>
 <!-----------------------------------------------------------------------------
         VERTEX SHADER
------------------------------------------------------------------------------->
+        ------------------------------------------------------------------------------>
         <script id="vertexShader" type="x-shader/x-vertex">
 // Built-ins provided by Three.js:
 // = object.matrixWorld
@@ -71,15 +71,24 @@
 // attribute vec2 uv;
 
 // TODO#A4: Declare any varyings here.
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
 
 void main() {
-    // TODO#A4: Compute gl_Position, as well as any varyings you need in the fragment shader.
-    gl_Position = vec4(1.0); // placeholder
+    // Calculate point in eye space.
+    vPosition = modelViewMatrix * vec4(position, 1.0);
+    // Calculate projected point.
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+    // We have to use the inverse transpose of the modelview matrix for the normal.
+    vNormal = normalize((normalMatrix * normal).xyz);
+    vUv = uv;
 }
         </script>
 <!-----------------------------------------------------------------------------
         FRAGMENT SHADER
------------------------------------------------------------------------------->
+        ------------------------------------------------------------------------------>
         <script id="fragmentShader" type="x-shader/x-fragment">
 uniform vec3 lightColors[ NUM_LIGHTS ];
 uniform vec3 lightPositions[ NUM_LIGHTS ]; // In eye space.
@@ -90,18 +99,58 @@ uniform float roughness;
 uniform sampler2D diffuseTexture; // k_d, the diffuse color. Use texture2D to look up into this.
 
 // TODO#A4: Declare any varyings here. 
+varying vec2 vUv; // UV coordinates.
+varying vec3 vNormal; // Normal in eye space.
+varying vec4 vPosition; // Pposition in eye space.
 
 vec3 to_sRGB(vec3 c) { return pow(c, vec3(1.0/2.2)); }
 vec3 from_sRGB(vec3 c) { return pow(c, vec3(2.2)); }
 
 void main() {
     // TODO#A4: Implement the reflectance function here.
-    gl_FragColor = vec4(1.0); // placeholder
+    vec3 Rd = from_sRGB(texture2D(diffuseTexture, vUv).rgb);
+    float pi = 3.1415926535897932384626433832795;
+    vec3 k_d = Rd/pi;
+    float F0 = 0.04;
+    vec3 N = normalize(vNormal);
+    vec3 V = normalize(-vPosition.xyz);
+    vec3 finalColor = vec3(0.0, 0.0, 0.0);
+
+    //Loop through the list 
+        for (int i = 0; i < NUM_LIGHTS; i++) {
+            float r = length(lightPositions[i] - vPosition.xyz);
+            vec3 L = normalize(lightPositions[i] - vPosition.xyz); 
+            vec3 H = normalize(L + V);
+
+            //Calculate the Fresnel term
+            float F = F0 + ((1.0 - F0)*pow(1.0 - dot(V,H), 5.0));
+            
+            //Calculate the Microfacet Distribution
+            float theta = acos(dot(N, H));
+            float tempD = 1.0 / (pow(roughness, 2.0) * pow(cos(theta), 4.0));
+            float temp1D = pow(tan(theta)/roughness, 2.0);
+            float temp2D = exp(-1.0 * temp1D); 
+            float D = tempD * temp2D;
+
+            // Calculate the Geometric Attenuation 
+            float first = (2.0 * dot(N, H) * dot(N, V)) / dot(V, H);
+            float second = (2.0 * (dot(N, H)) * (dot(N, L))) / (dot(V, H));
+            float G1 =  min(1.0, first);
+            float G = min(G1, second);
+            float one = (F / pi);
+            float two = (D * G) / (dot(N, V) * dot(N,L));
+            float three = max(dot(N, L), 0.0);
+            vec3 four = lightColors[i]/pow(r, 2.0);
+            finalColor +=  ((one*two) +k_d)*three*four;
+    }   
+
+    gl_FragColor = vec4(to_sRGB(finalColor * exposure), 1.0); // placeholder
+    
 }
-        </script>
+</script>
 <!-----------------------------------------------------------------------------
         END SHADERS
------------------------------------------------------------------------------->
+        ------------------------------------------------------------------------------>
         <script src="js/A4Common.js"></script>
         <script>
             commonInit();
@@ -111,7 +160,7 @@ void main() {
             function init() {
                 defaultTextureTarget = 'diffuseTexture';
                 meshMaterial.uniforms.diffuseTexture = { type: 't', value: null };
-            
+
                 addLight(new THREE.Vector3(50, 50, 100), new THREE.Vector3(0.8, 0.8, 0.8));
                 addLight(new THREE.Vector3(-50, -50, -50), new THREE.Vector3(0.5, 0.5, 0.6));
                 
@@ -119,4 +168,4 @@ void main() {
             }
         </script>
     </body>
-</html>
+    </html>

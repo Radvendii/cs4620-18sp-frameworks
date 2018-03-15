@@ -5,84 +5,97 @@ import gl.RenderObject;
 
 public class TranslationManipulator extends Manipulator {
 
-  public TranslationManipulator (ManipulatorAxis axis) {
-    super();
-    this.axis = axis;
-  }
+	public TranslationManipulator(ManipulatorAxis axis) {
+		super();
+		this.axis = axis;
+	}
 
-  public TranslationManipulator (RenderObject reference, ManipulatorAxis axis) {
-    super(reference);
-    this.axis = axis;
-  }
+	public TranslationManipulator(RenderObject reference, ManipulatorAxis axis) {
+		super(reference);
+		this.axis = axis;
+	}
 
-  @Override
-  protected Matrix4 getReferencedTransform () {
-    if (this.reference == null) {
-      throw new RuntimeException ("Manipulator has no controlled object!");
-    }
-    return new Matrix4().set(reference.translation);
-  }
+	@Override
+	protected Matrix4 getReferencedTransform() {
+		if (this.reference == null) {
+			throw new RuntimeException("Manipulator has no controlled object!");
+		}
+		return new Matrix4().set(reference.translation);
+	}
 
-  public Matrix3 replaceCol(Matrix3 m, int c, Vector3 replace){
-    for(int r=0; r<3; r++){
-      m.set(r, c, replace.get(r));
-    }
-    return m;
-  }
+	@Override
+	public void applyTransformation(Vector2 lastMousePos, Vector2 curMousePos, Matrix4 viewProjection) {
+		// TODO#A3: Modify this.reference.translation given the mouse input.
+		// Use this.axis to determine the axis of the transformation.
+		// Note that the mouse positions are given in coordinates that are normalized to
+		// the range [-1, 1]
+		// for both X and Y. That is, the origin is the center of the screen, (-1,-1) is
+		// the bottom left
+		// corner of the screen, and (1, 1) is the top right corner of the screen.
+		Matrix4 inverse = viewProjection.invert();
+		Vector3 c1 = new Vector3(lastMousePos.x, lastMousePos.y, -1);
+		Vector3 c2 = new Vector3(lastMousePos.x, lastMousePos.y, 1);
+		c1 = inverse.clone().mulPos(c1);
+		c2 = inverse.clone().mulPos(c2);
+		Vector3 ray1 = c2.clone().sub(c1);
 
-  public Vector3 cramer(Matrix3 m, Vector3 b){
-    float det = m.determinant();
-    Vector3 ret = new Vector3();
-    for(int i=0; i<3; i++){
-      ret.set(i, replaceCol(m.clone(), i, b).determinant() / det);
-    }
-    return ret;
-  }
+		Vector3 c3 = new Vector3(curMousePos.x, curMousePos.y, -1);
+		Vector3 c4 = new Vector3(curMousePos.x, curMousePos.y, 1);
+		c3 = inverse.clone().mulPos(c3);
+		c4 = inverse.clone().mulPos(c4);
+		Vector3 ray2 = c4.clone().sub(c3);
 
-  @Override
-  public void applyTransformation(Vector2 lastMousePos, Vector2 curMousePos, Matrix4 viewProjection) {
-    // TODO#A3: Modify this.reference.translation given the mouse input.
-    // Use this.axis to determine the axis of the transformation.
-    // Note that the mouse positions are given in coordinates that are normalized to the range [-1, 1]
-    //   for both X and Y. That is, the origin is the center of the screen, (-1,-1) is the bottom left
-    //   corner of the screen, and (1, 1) is the top right corner of the screen.
-    Vector3 axis = new Vector3(this.axis == ManipulatorAxis.X ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Y ? 1.0f : 0.0f, this.axis == ManipulatorAxis.Z ? 1.0f : 0.0f);
-    Vector3 axisT = getReferencedTransform().mulDir(axis);
+		Vector3 origin = getReferencedTransform().clone().mulPos(new Vector3(0, 0, 0));
+		Vector3 dirx = getReferencedTransform().clone().mulDir(new Vector3(1, 0, 0));
+		Vector3 diry = getReferencedTransform().clone().mulDir(new Vector3(0, 1, 0));
+		Vector3 dirz = getReferencedTransform().clone().mulDir(new Vector3(0, 0, 1));
+		Vector3 dir = new Vector3();
 
-    Matrix4 viewToWorld = viewProjection.clone().invert();
+		if (axis == ManipulatorAxis.X) {
+			dir = dirx;
+		} else if (axis == ManipulatorAxis.Y) {
+			dir = diry;
+		} else {
+			dir = dirz;
+		}
 
-    Vector2[] mView = new Vector2[2];
-    mView[0] = lastMousePos;
-    mView[1] = curMousePos;
+		Vector3 u1 = dir.clone().cross(ray1);
+		Vector3 w1 = dir.clone().cross(u1);
+		Vector3 temps1 = origin.clone().sub(c1);
+		float s1 = (temps1.dot(w1)) / (ray1.clone().dot(w1));
+		Vector3 p1 = ray1.clone().mul(s1).clone().add(c1);
 
-    Vector3[] mWorld = new Vector3[2];
-    Vector3[] mDir = new Vector3[2];
-    for(int i=0; i<2; i++){
-      mWorld[i] = viewToWorld.mulPos(new Vector3(mView[i].x, mView[i].y, -1.0f));
-      mDir[i] = viewToWorld.mulPos(new Vector3(mView[i].x, mView[i].y, -0.8f)).sub(mWorld[i]);
-    }
-    Vector3 manipOrig = getReferencedTransform().mulPos(new Vector3());
-    Vector3 toNear = viewToWorld.mulDir(new Vector3(0.0f,0.0f,1.0f)).normalize();
-    Vector3 perp = toNear.clone().cross(axisT).normalize();
+		Vector3 u2 = dir.clone().cross(ray2);
+		Vector3 w2 = dir.clone().cross(u2);
+		Vector3 temps2 = origin.clone().sub(c3);
+		float s2 = (temps2.dot(w2)) / (ray2.clone().dot(w2));
+		Vector3 p2 = ray2.clone().mul(s2).clone().add(c3);
 
-    Vector3[] sol = new Vector3[2];
-    for(int i=0; i<2; i++){
-      sol[i] = cramer(
-          new Matrix3(
-            axisT.x, perp.x, -mDir[i].x,
-            axisT.y, perp.y, -mDir[i].y,
-            axisT.z, perp.z, -mDir[i].z),
-          mWorld[i].clone().sub(manipOrig));
-    }
+		float tempt1 = (p1.clone().sub(origin)).clone().dot(dir);
+		float t1 = tempt1 / dir.lenSq();
 
-    float tr = sol[1].x - sol[0].x;
+		float tempt2 = (p2.clone().sub(origin)).clone().dot(dir);
+		float t2 = tempt2 / dir.lenSq();
 
-    this.reference.translation.mulBefore(Matrix4.createTranslation(axis.mul(tr)));
-  }
+		float t = t2 - t1;
 
-  @Override
-  protected String meshPath () {
-    return "data/meshes/Translate.obj";
-  }
+		Matrix4 temp = new Matrix4();
+		if (axis == ManipulatorAxis.X) {
+			temp = Matrix4.createTranslation(t, 0, 0);
+			this.reference.translation.mulAfter(temp);
+		} else if (axis == ManipulatorAxis.Y) {
+			temp = Matrix4.createTranslation(0, t, 0);
+			this.reference.translation.mulAfter(temp);
+		} else {
+			temp = Matrix4.createTranslation(0, 0, t);
+			this.reference.translation.mulAfter(temp);
+		}
+
+	}
+
+	@Override
+	protected String meshPath() {
+		return "data/meshes/Translate.obj";
+	}
 
 }

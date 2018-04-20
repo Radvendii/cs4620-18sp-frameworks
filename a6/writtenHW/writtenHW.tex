@@ -1,0 +1,514 @@
+\documentclass[11pt, oneside]{article}
+\usepackage{latexrc}
+
+\title{Animation Written Homework}
+\author{Taeer Bar-Yam (tb442) \and Nayanathara Palanivel (np372)}
+% \date{} % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\begin{enumerate}[Problem 1:]
+
+  \item
+    \begin{enumerate}[1.]
+      \item
+        \begin{enumerate}[a)]
+          \item
+            \[
+              M_0 = 
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \frac 3 4 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                \frac 3 4 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+            \]
+            \[
+              M_1 = 
+              \begin{bmatrix}
+                -1 & 0\\
+                0 & -1\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \frac 3 4 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                -\frac 3 2 & 0\\
+                0 & -\frac 3 4\\
+              \end{bmatrix}
+            \]
+          \item
+            \[
+              M_0 = 
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \frac 1 2 & 0\\
+                0 & \frac 1 2\\
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                \frac 1 2 & 0\\
+                0 & \frac 1 2\\
+              \end{bmatrix}
+            \]
+            \[
+              M_1 = 
+              \begin{bmatrix}
+                0 & 1\\
+                -1 & 0\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                1 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                0 & \frac 3 2\\
+                -1 & 0\\
+              \end{bmatrix}
+            \]
+          \item
+            \[
+              M_0 = 
+              \begin{bmatrix}
+                \frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+                -\frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \sqrt 2 & 0\\
+                0 & \sqrt 2\\
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                1 & 1\\
+                -1 & 1\\
+              \end{bmatrix}
+            \]
+            \[
+              M_1 = 
+              \begin{bmatrix}
+                0 & -1\\
+                1 & 0\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+              =
+              \begin{bmatrix}
+                0 & -1\\
+                1 & 0\\
+              \end{bmatrix}
+            \]
+        \end{enumerate}
+      \item
+        \[ M^{lin}_{0.5} = \frac {M_0 + M_1} 2 \]
+        \begin{enumerate}[a)]
+          \item
+            \[
+              \left(
+                \begin{bmatrix}
+                  \frac 3 4 & 0\\
+                  0 & \frac 3 2\\
+                \end{bmatrix}
+                +
+                \begin{bmatrix}
+                  -\frac 3 2 & 0\\
+                  0 & -\frac 3 4\\
+                \end{bmatrix}
+              \right)
+              \Big/ 2
+              =
+              \begin{bmatrix}
+                -\frac 3 8 & 0\\
+                0 & \frac 3 8\\
+              \end{bmatrix}
+            \]
+          \item
+            \[
+              \left(
+                \begin{bmatrix}
+                  \frac 1 2 & 0\\
+                  0 & \frac 1 2\\
+                \end{bmatrix}
+                +
+                \begin{bmatrix}
+                  0 & \frac 3 2\\
+                  -1 & 0\\
+                \end{bmatrix}
+              \right)
+              \Big/ 2
+              =
+              \begin{bmatrix}
+                \frac 1 4 & \frac 3 4\\
+                -\frac 1 2 & \frac 1 4\\
+              \end{bmatrix}
+            \]
+          \item
+            \[
+              \left(
+                \begin{bmatrix}
+                  1 & 1\\
+                  -1 & 1\\
+                \end{bmatrix}
+                +
+                \begin{bmatrix}
+                  0 & -1\\
+                  1 & 0\\
+                \end{bmatrix}
+              \right)
+              \Big/ 2
+              =
+              \begin{bmatrix}
+                \frac 1 2 & 0\\
+                0 & \frac 1 2\\
+              \end{bmatrix}
+            \]
+        \end{enumerate}
+      \item
+        \begin{enumerate}[a)]
+          \item
+            \[
+              M_0 = 
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \frac 3 4 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+            \]
+            \[
+              M_1 = 
+              \begin{bmatrix}
+                -1 & 0\\
+                0 & -1\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \frac 3 4 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+            \]
+          \item
+            \[
+              M_0 = 
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \frac 1 2 & 0\\
+                0 & \frac 1 2\\
+              \end{bmatrix}
+            \]
+            \[
+              M_1 = 
+              \begin{bmatrix}
+                0 & 1\\
+                -1 & 0\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                1 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+            \]
+          \item
+            \[
+              M_0 = 
+              \begin{bmatrix}
+                \frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+                -\frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                \sqrt 2 & 0\\
+                0 & \sqrt 2\\
+              \end{bmatrix}
+            \]
+            \[
+              M_1 = 
+              \begin{bmatrix}
+                0 & -1\\
+                1 & 0\\
+              \end{bmatrix}
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+            \]
+        \end{enumerate}
+      \item
+        \[ M^{pol}_{0.5} = R_{avg}\left(\frac {S_0 + S_1} 2\right) \]
+        \begin{enumerate}[a)]
+        \item
+          \[
+            R_{avg} = \frac {0 + 180^\circ} 2 = 90^\circ = 
+            \begin{bmatrix}
+              0 & 1\\
+              -1 & 0\\
+            \end{bmatrix}
+          \]
+          \[
+            \left(
+              \begin{bmatrix}
+                \frac 3 4 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+              +
+              \begin{bmatrix}
+                \frac 3 2 & 0\\
+                0 & \frac 3 4\\
+              \end{bmatrix}
+            \right)
+            \Big/ 2
+            =
+            \begin{bmatrix}
+              \frac 9 8 & 0\\
+              0 & \frac 9 8\\
+            \end{bmatrix}
+          \]
+          \[
+            \begin{bmatrix}
+              0 & 1\\
+              -1 & 0\\
+            \end{bmatrix}
+            \begin{bmatrix}
+              \frac 9 8 & 0\\
+              0 & \frac 9 8\\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+              0 & \frac 9 8\\
+              -\frac 9 8 & 0\\
+            \end{bmatrix}
+          \]
+        \item
+          \[
+            R_{avg} = \frac {0 + 90^\circ} 2 = 45^\circ = 
+            \begin{bmatrix}
+              \frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+              -\frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+            \end{bmatrix}
+          \]
+          \[
+            \left(
+              \begin{bmatrix}
+                \frac 1 2 & 0\\
+                0 & \frac 1 2\\
+              \end{bmatrix}
+              +
+              \begin{bmatrix}
+                1 & 0\\
+                0 & \frac 3 2\\
+              \end{bmatrix}
+            \right)
+            \Big/ 2
+            =
+            \begin{bmatrix}
+              \frac 3 4 & 0\\
+              0 & 1\\
+            \end{bmatrix}
+          \]
+          \[
+            \begin{bmatrix}
+              \frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+              -\frac {\sqrt 2} 2 & \frac {\sqrt 2} 2\\
+            \end{bmatrix}
+            \begin{bmatrix}
+              \frac 3 4 & 0\\
+              0 & 1\\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+              \frac {3\sqrt 2} 8 & \frac {\sqrt 2} 2\\
+              -\frac {3\sqrt 2} 8 & \frac {\sqrt 2} 2\\
+            \end{bmatrix}
+          \]
+        \item
+          \[
+            R_{avg} = \frac {45^\circ + 270^\circ} 2 = 157.5^\circ = 
+            \begin{bmatrix}
+              -0.924 & 0.383\\
+              -0.383 & -0.924\\
+            \end{bmatrix}
+          \]
+          \[
+            \left(
+              \begin{bmatrix}
+                \sqrt 2 & 0\\
+                0 & \sqrt 2\\
+              \end{bmatrix}
+              +
+              \begin{bmatrix}
+                1 & 0\\
+                0 & 1\\
+              \end{bmatrix}
+            \right)
+            \Big/ 2
+            =
+            \begin{bmatrix}
+              \frac {\sqrt 2 + 1} 2 & 0\\
+              0 & \frac {\sqrt 2 + 1} 2\\
+            \end{bmatrix}
+          \]
+          \[
+            \begin{bmatrix}
+              -0.924 & 0.383\\
+              -0.383 & -0.924\\
+            \end{bmatrix}
+            \begin{bmatrix}
+              \frac {\sqrt 2 + 1} 2 & 0\\
+              0 & \frac {\sqrt 2 + 1} 2\\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+              -1.115 & 0.470\\
+              -0.462 & -1.115\\
+            \end{bmatrix}
+          \]
+        \end{enumerate}
+      \item
+        \newcommand{\myTikz}[1]{
+          \begin{tikzpicture}
+            \draw[step=.5cm,gray,very thin] (-1.5,-1.5) grid (1.5,1.5); %
+            #1
+          \end{tikzpicture}
+        }
+        \newcommand{\shape}[5]{
+          \bgroup %
+          \pgftransformcm{#2}{#3}{#4}{#5}{\pgfpoint{0}{0}}; %
+          \draw[color=#1] (0,1) -- (1,0); %
+          \draw[color=#1] (1,0) -- (0,-1); %
+          \draw[color=#1, thick] (0,-1) -- (-1,0); %
+          \draw[color=#1, very thick] (-1,0) -- (0,1); %
+          \egroup %
+        }
+        \begin{align*}
+          \text{Red} &: M^{lin}_{0.5}p\\
+          \text{Green} &: M^{pol}_{0.5}p
+        \end{align*}
+        Where $p$ varies over the points of the object
+        \par\hspace*{-\csname @totalleftmargin\endcsname}\parbox{\textwidth}
+        {
+          \begin{center}
+            \myTikz{\shape{blue}{1}{0}{0}{1}}
+          \end{center}
+        }
+        \begin{enumerate}[a)]
+          \item~\\
+            \par\hspace*{-\csname @totalleftmargin\endcsname}\parbox{\textwidth}
+            {
+              \begin{center}
+                \myTikz{\shape{blue}{3/4}{0}{0}{3/2}}
+                \myTikz
+                {
+                  \shape{red}{-3/8}{0}{0}{3/8}
+                  \shape{green}{0}{-9/8}{9/8}{0}
+                }
+                \myTikz{\shape{blue}{-3/2}{0}{0}{-3/4}}
+              \end{center}
+            }
+          \item~\\
+            \par\hspace*{-\csname @totalleftmargin\endcsname}\parbox{\textwidth}
+            {
+              \begin{center}
+                \myTikz{\shape{blue}{1/2}{0}{0}{1/2}}
+                \myTikz
+                {
+                  \shape{red}{1/4}{-1/2}{3/4}{1/4}
+                  \shape{green}{0.530}{-0.530}{0.707}{0.707}
+                }
+                \myTikz{\shape{blue}{0}{-1}{3/2}{0}}
+              \end{center}
+            }
+          \item~\\
+            \par\hspace*{-\csname @totalleftmargin\endcsname}\parbox{\textwidth}
+            {
+              \begin{center}
+                \myTikz{\shape{blue}{1}{-1}{1}{1}}
+                \myTikz
+                {
+                  \shape{red}{1/2}{0}{0}{1/2}
+                  \shape{green}{-1.115}{-0.462}{0.470}{-1.115}
+                }
+                \myTikz{\shape{blue}{0}{1}{-1}{0}}
+              \end{center}
+            }
+        \end{enumerate}
+    \end{enumerate}
+  \item
+    \begin{enumerate}[1.]
+      \item 
+        \begin{align*}
+          q_1 &= \cos(0) + (\mathrm{axis})\cdot\cancelto{0}{\sin(0)}\\
+              &= (1,0,0,0)\\
+          q_2 &= \cancelto{0}{\cos(\frac \pi 2)} + (0,1,0)\cdot\cancelto{1}{\sin(\frac \pi 2)}\\ 
+              &= (0,0,1,0)
+        \end{align*}
+      \item
+        \begin{align*}
+          \psi &= \cos^{-1}(q_1\cdot q_2)\\
+               &= \cos^{-1}(0)\\
+               &= \frac \pi 2\\
+          q_3 &= \frac {q_1\sin\left(1-\frac 1 6\right)\psi + q_2\sin \frac 1 6 \psi} {\sin \psi}\\
+              &= \frac {(1,0,0,0)\sin \frac {5\pi} {12} + (0,0,1,0)\sin \frac \pi {12}} {\sin \frac \pi 2}\\
+              &= \frac {(1,0,0,0)\frac {\sqrt 3 + 1} {2\sqrt 2} + (0,0,1,0)\frac {\sqrt 3 - 1} {2\sqrt 2}} 1\\
+              &= \left(\frac {\sqrt 3 + 1} {2\sqrt 2}, 0, \frac {\sqrt 3 - 1} {2\sqrt 2},0\right)\\
+        \end{align*}
+        Axis of rotation for $q_3$ is $(0,1,0)$ and angle is $2\cos^{-1}\frac {\sqrt 3 + 1} {2\sqrt 2} = \frac \pi 6$
+      \item
+        The rotation matrix corresponding to $q_3$ is:
+        \begin{align*}
+          M &=
+          \begin{bmatrix}
+            w^2+x^2-y^2-z^2 & 2(xy-wz) & 2(xz+wy)\\
+            2(xy+wz) & w^2-x^2+y^2-z^2 & 2(yz-wx)\\
+            2(xz-wy) & 2(yz+wx) & w^2-x^2-y^2+z^2\\
+          \end{bmatrix}\\
+          &=
+          \begin{bmatrix}
+            {\left(\frac {\sqrt 3 + 1} {2\sqrt 2}\right)}^2 - {\left(\frac {\sqrt 3 - 1} {2\sqrt 2}\right)}^2 & 0 & 2\left(0+\left(\frac {\sqrt 3 - 1} {2\sqrt 2}\right)\left(\frac {\sqrt 3 + 1} {2\sqrt 2}\right)\right)\\
+            0 & {\left(\frac {\sqrt 3 + 1} {2\sqrt 2}\right)}^2 + {\left(\frac {\sqrt 3 - 1} {2\sqrt 2}\right)}^2 & 0\\
+            -2\left(0+\left(\frac {\sqrt 3 - 1} {2\sqrt 2}\right)\left(\frac {\sqrt 3 + 1} {2\sqrt 2}\right)\right) & 0 & {\left(\frac {\sqrt 3 + 1} {2\sqrt 2}\right)}^2 - {\left(\frac {\sqrt 3 - 1} {2\sqrt 2}\right)}^2\\
+          \end{bmatrix}\\
+          &=
+          \begin{bmatrix}
+            \frac {\sqrt 3} 2 & 0 & \frac 1 2 \\
+            0 & 1 & 0 \\
+            -\frac 1 2 & 0 & \frac {\sqrt 3} 2\\
+          \end{bmatrix}
+        \end{align*}
+
+        To check,
+        \begin{align*}
+          M^6 &= 
+          {\begin{bmatrix}
+              \frac {\sqrt 3} 2 & 0 & \frac 1 2 \\
+              0 & 1 & 0 \\
+              -\frac 1 2 & 0 & \frac {\sqrt 3} 2\\
+          \end{bmatrix}} ^ 6\\
+          &=
+          \begin{bmatrix}
+            -1 & 0 & 0\\
+            0 & 1 & 0 \\
+            0 & 0 & -1\\
+          \end{bmatrix}\\
+        \end{align*}
+        which is the rotation matrix for $q_2$.
+    \end{enumerate}
+\end{enumerate}
+
+\end{document}

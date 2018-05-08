@@ -14,8 +14,52 @@ import ray2.material.BSDF;
 import ray2.material.BSDFSamplingRecord;
 import ray2.surface.Surface;
 
+/**
+ * An Integrator that works by sampling light sources.  It accounts for light that illuminates all surfaces
+ * directly from point or area sources, and from the environment.  It also includes recursive reflections
+ * for polished surfaces (Glass and Glazed), but not for other surfaces.
+ * 
+ * @author srm
+ */
 public class LightSamplingIntegrator extends Integrator {
-
+	/* 
+	 * The illumination algorithm is:
+	 * 
+	 *   0. light source emission:
+	 *      if the surface is a light source:
+	 *        add the source's radiance
+	 *   1. light sources:
+	 *      for each light in the scene
+	 *        choose a point on the light
+	 *        evaluate the BRDF
+	 *        do a shadow test
+	 *        compute the estimate of this light's contribution 
+	 *          as (source radiance) * brdf * attenuation * (cos theta) / pdf, and add it
+	 *   2. environment:
+	 *      choose a direction from the environment
+	 *      evaluate the BRDF
+	 *      do a shadow test
+	 *      compute the estimate of the environment's contribution
+	 *        as (env radiance) * brdf * (cos theta) / pdf, and add it
+	 *   3. mirror reflections and refractions:
+	 *      choose a direction from the BSDF, continuing only if it is discrete
+	 *      trace a recursive ray
+	 *      add the recursive radiance weighted by (cos theta) * (brdf value) / (probability)
+	 *      
+	 * Step 3 is violating the idea of light source sampling a bit, but it is needed because it's impossible
+	 * to choose a light source point exactly in the reflection or refraction direction, and we do like to be 
+	 * able to see the reflections.  By making the recursive call only for directions chosen discretely 
+	 * (that is, directions belonging to perfectly sharp reflection and refraction components) we are leaving out
+	 * diffuse and glossy interreflections.
+	 * 
+	 * In Step 1 note that the attenuation includes the inverse square law and also the cosine at the source's
+	 * end of the ray that is required by the illumination integral for an area source.  This is taken care of
+	 * by the Light subclasses: Point light sets its attenuation to 1 / r^2 whereas RectangleLight sets the 
+	 * attenuation to (cos theta_source) / r^2.
+	 *   
+	 * @see ray2.integrator.Integrator#shade(egl.math.Colord, ray2.Scene, ray2.Ray, ray2.IntersectionRecord, int)
+	 */
+	
 	@Override
 	public void shade(Colord outRadiance, Scene scene, Ray ray, IntersectionRecord iRec, int depth) {
       // TODO#A7: Calculate outRadiance at current shading point.

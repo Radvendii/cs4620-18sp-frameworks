@@ -15,6 +15,9 @@
   <image>
     450 450
   </image>
+  
+  <integrator type="PointLightIntegrator" />
+  
   <bsdf name="ground" type="LambertianBSDF">
       <diffuseColor>.05 1 0.2</diffuseColor>
   </bsdf>

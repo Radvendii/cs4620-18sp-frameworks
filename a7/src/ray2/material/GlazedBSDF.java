@@ -48,6 +48,7 @@ public class GlazedBSDF extends BSDF {
 //	 */
 //	@Override
 //	public void shade(Colord outIntensity, Scene scene, Ray ray, IntersectionRecord record, int depth) {
+//		// TODO#A7: fill in this function.
 //		// You may find it helpful to create helper methods if the code here gets too long.
 //		
 //		Colord color = new Colord();
@@ -128,7 +129,7 @@ public class GlazedBSDF extends BSDF {
 		if (xi <= R) {
 			// Compute specular reflected ray direction
 			sampleRecord.dir2.addMultiple(2*cos_1, normal).sub(IncomingVec).normalize();
-			outValue.set(R/cos_1);
+			outValue.set(R).div(cos_1);
 			prob = R;
 			sampleRecord.isDiscrete = true;
 		} else {
@@ -142,19 +143,12 @@ public class GlazedBSDF extends BSDF {
 			sampleRecord.dir2.addMultiple(outDirLocal.x, u);
 			sampleRecord.dir2.addMultiple(outDirLocal.y, v);
 			
-			outValue.set(R).div(cos_1);
-			prob = R * cos_1 / Math.PI;
+			Colord color = new Colord();
+			substrate.eval(sampleRecord.dir1, sampleRecord.dir2, sampleRecord.normal, color);
+			outValue.set(color).mul(1-R);
+			prob = (1-R) * cos_1 / Math.PI;
 			sampleRecord.isDiscrete = false;
 		}
-		
-		
-		
-		// Compute reflected ray direction
-		sampleRecord.dir2.addMultiple(2*cos_1, normal).sub(IncomingVec).normalize();
-		outValue.set(R).div(cos_1);
-		prob = 1;
-		
-		sampleRecord.isDiscrete = true;
 
 		return prob;
 	}

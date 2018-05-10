@@ -273,6 +273,30 @@ public class RayTracer {
 		System.out.println("Bbox miss count : " + Bvh.missCount);
 		System.out.println("Total triangle intersections: " + Triangle.intersectionCount);
 	}
+	
+	public static boolean shadeRayExtra(Colord outColor, Scene scene, Ray ray, int depth) {
+		outColor.setZero();
+
+		if(depth > MAX_DEPTH)
+			return false;
+
+		IntersectionRecord intersectionRecord = new IntersectionRecord();
+
+		if (!scene.getFirstIntersection(intersectionRecord, ray)) {
+			if(scene.envMap != null) {
+				scene.envMap.eval(ray.direction, outColor);
+				return true;
+			}
+			else {
+				outColor.set(scene.getBackColor());
+				return false;
+			}
+		}
+
+		Integrator integrator = scene.getIntegrator();
+		integrator.shade(outColor, scene, ray, intersectionRecord, depth);
+		return (intersectionRecord.surface.getLight() != null);
+	}
 
 
 	/**
@@ -283,26 +307,7 @@ public class RayTracer {
 	 * @param ray the ray to shade
 	 */
 	public static void shadeRay(Colord outColor, Scene scene, Ray ray, int depth) {
-
-		outColor.setZero();
-
-		if(depth > MAX_DEPTH)
-			return;
-
-		IntersectionRecord intersectionRecord = new IntersectionRecord();
-
-		if (!scene.getFirstIntersection(intersectionRecord, ray)) {
-			if(scene.envMap != null)
-				scene.envMap.eval(ray.direction, outColor);
-			else
-				outColor.set(scene.getBackColor());
-
-			return;
-		}
-
-		Integrator integrator = scene.getIntegrator();
-		integrator.shade(outColor, scene, ray, intersectionRecord, depth);
-
+		shadeRayExtra(outColor, scene, ray, depth);
 	}
 
 	/**

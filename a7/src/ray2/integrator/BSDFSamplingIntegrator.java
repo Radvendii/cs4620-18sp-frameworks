@@ -58,6 +58,20 @@ public class BSDFSamplingIntegrator extends Integrator {
       // look up lighting in that direction and get incident radiance.
       // Before you calculate the reflected radiance, you need to check whether the probability value
       // from bsdf sample is 0.
+		
+		if(iRec.surface.getLight() != null) {
+			Colord outR = new Colord();
+			iRec.surface.getLight().eval(ray, outR);
+			outRadiance.add(outR);
+		}
+		else {
+			BSDFSamplingRecord sampleRecord = new BSDFSamplingRecord();
+			sampleRecord.dir1 = ray.direction;
+			sampleRecord.normal = iRec.normal;
+			Colord f_r = new Colord();
+			iRec.surface.getBSDF().sample(sampleRecord, new Vector2d(Math.random(), Math.random()), f_r);
+			
+		}
 
 	}
 

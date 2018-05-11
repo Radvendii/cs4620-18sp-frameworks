@@ -1,5 +1,4 @@
 package ray2.integrator;
-
 import egl.math.Colord;
 import egl.math.Vector2d;
 import egl.math.Vector3d;
@@ -61,27 +60,30 @@ public class BSDFSamplingIntegrator extends Integrator {
       // from bsdf sample is 0.
 		
 		if(iRec.surface.getLight() != null) {
+			// If we're looking at a light, use its radiance
 			Colord outR = new Colord();
 			iRec.surface.getLight().eval(ray, outR);
 			outRadiance.add(outR);
 		}
 		else {
-			BSDFSamplingRecord sampleRecord = new BSDFSamplingRecord();
-			sampleRecord.dir1 = ray.direction;
-			sampleRecord.normal = iRec.normal;
+			// Calculate a sample ray from the surface.
+			BSDFSamplingRecord sRec = new BSDFSamplingRecord();
+			sRec.dir1 = ray.direction;
+			sRec.normal = iRec.normal;
 			Colord f_r = new Colord();
-			double prob = iRec.surface.getBSDF().sample(sampleRecord, new Vector2d(Math.random(), Math.random()), f_r);
-			Ray bounceRay = new Ray(iRec.location, sampleRecord.dir2);
+			double prob = iRec.surface.getBSDF().sample(sRec, new Vector2d(Math.random(), Math.random()), f_r);
+			// Recursively trace the ray
+			Ray bounceRay = new Ray(iRec.location, sRec.dir2);
 			bounceRay.makeOffsetRay();
 			Colord outR = new Colord();
 			boolean hitLight = RayTracer.shadeRayExtra(outR, scene, bounceRay, depth + 1);
-			if((sampleRecord.isDiscrete || hitLight) && prob > 1e-6) {
-				System.out.println(outR);
-				outRadiance.add(outR.clone().mul(f_r).mul(Math.cos(iRec.normal.angle(bounceRay.direction))).div(prob));
+			if((sRec.isDiscrete || hitLight) && prob > 1e-6) {
+				// If the sample was discrete, or if the next iteration hits a light, color based on the radiance of the recursive call
+				outRadiance.add(outR.clone().mul(f_r).mul(Math.abs(iRec.normal.clone().dot(bounceRay.direction))).div(prob));
 			}
 			
 		}
-		
+		// Reuse other code to do point light shading
 		PointLightIntegrator pointLights = new PointLightIntegrator();
 		pointLights.shade(outRadiance, scene, ray, iRec, depth);
 

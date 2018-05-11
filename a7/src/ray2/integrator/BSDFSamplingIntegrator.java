@@ -9,6 +9,7 @@ import ray2.Scene;
 import ray2.material.BSDF;
 import ray2.material.BSDFSamplingRecord;
 import ray2.surface.Surface;
+import ray2.RayTracer;
 
 /**
  * An Integrator that works by sampling light sources.  It accounts for light that illuminates all surfaces
@@ -69,9 +70,19 @@ public class BSDFSamplingIntegrator extends Integrator {
 			sampleRecord.dir1 = ray.direction;
 			sampleRecord.normal = iRec.normal;
 			Colord f_r = new Colord();
-			iRec.surface.getBSDF().sample(sampleRecord, new Vector2d(Math.random(), Math.random()), f_r);
+			double prob = iRec.surface.getBSDF().sample(sampleRecord, new Vector2d(Math.random(), Math.random()), f_r);
+			Ray bounceRay = new Ray(sampleRecord.dir2, iRec.location);
+			bounceRay.makeOffsetRay();
+			Colord outR = new Colord();
+			boolean hitLight = RayTracer.shadeRayExtra(outR, scene, bounceRay, depth + 1);
+			if((sampleRecord.isDiscrete || hitLight) && prob > 1e-6) {
+				outRadiance.add(outR.clone().mul(f_r).mul(Math.cos(iRec.normal.angle(bounceRay.direction))).div(prob));
+			}
 			
 		}
+		
+		PointLightIntegrator pointLights = new PointLightIntegrator();
+		pointLights.shade(outRadiance, scene, ray, iRec, depth);
 
 	}
 

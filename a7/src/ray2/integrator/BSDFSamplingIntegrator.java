@@ -71,11 +71,12 @@ public class BSDFSamplingIntegrator extends Integrator {
 			sampleRecord.normal = iRec.normal;
 			Colord f_r = new Colord();
 			double prob = iRec.surface.getBSDF().sample(sampleRecord, new Vector2d(Math.random(), Math.random()), f_r);
-			Ray bounceRay = new Ray(sampleRecord.dir2, iRec.location);
+			Ray bounceRay = new Ray(iRec.location, sampleRecord.dir2);
 			bounceRay.makeOffsetRay();
 			Colord outR = new Colord();
 			boolean hitLight = RayTracer.shadeRayExtra(outR, scene, bounceRay, depth + 1);
 			if((sampleRecord.isDiscrete || hitLight) && prob > 1e-6) {
+				System.out.println(outR);
 				outRadiance.add(outR.clone().mul(f_r).mul(Math.cos(iRec.normal.angle(bounceRay.direction))).div(prob));
 			}
 			

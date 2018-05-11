@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+A scene for testing environment illuminatino.
+It consists of a box standing on a plane, illuminated by a uniform environment.
+ -->
+<scene>
+  <!-- <samples>256</samples> -->
+  <samples>50</samples>
+  <exposure>4</exposure>
+  <camera type="PerspectiveCamera">
+    <viewPoint>0 0.7 0</viewPoint>
+    <viewDir>0 0 1</viewDir>
+    <viewUp>0 1 0</viewUp>
+    <projDistance>1.2</projDistance>
+    <viewWidth>0.8</viewWidth>
+    <viewHeight>0.8</viewHeight>
+  </camera>
+  <image>
+    450 450
+  </image>
+
+  <integrator type="LightSamplingIntegrator" />
+
+  <bsdf name="ground" type="LambertianBSDF">
+    <diffuseColor>0.5 0.5 0.5</diffuseColor>
+  </bsdf>
+  
+  <bsdf name="wall" type="LambertianBSDF">
+    <diffuseColor>0.5 0.5 0.6</diffuseColor>
+  </bsdf>
+  
+  <bsdf name="ceiling" type="LambertianBSDF">
+    <diffuseColor>0.5 0.5 0.5</diffuseColor>
+  </bsdf>
+  
+  <bsdf name="door" type="LambertianBSDF">
+    <diffuseColor>0.7 0.7 5.0</diffuseColor>
+  </bsdf>
+
+  <surface type="Box">
+    <minpt>-1 -1 -2</minpt>
+    <maxpt>1 0 10</maxpt>
+    <bsdf ref="ground" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.8 0 -2</minpt>
+    <maxpt>1 1.5 10</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-1 0 -2</minpt>
+    <maxpt>-0.8 1.5 10</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 3</minpt>
+    <maxpt>-0.77 1.2 4</maxpt>
+    <bsdf ref="door" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 2.95</minpt>
+    <maxpt>-0.75 1.25 3</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 4</minpt>
+    <maxpt>-0.75 1.25 4.05</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+
+  <surface type="Box">
+    <minpt>-0.8 1.2 3</minpt>
+    <maxpt>-0.75 1.25 4</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.77 0.6 3.1</minpt>
+    <maxpt>-0.75 0.62 3.17</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 6</minpt>
+    <maxpt>-0.77 1.2 7</maxpt>
+    <bsdf ref="door" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 5.95</minpt>
+    <maxpt>-0.75 1.25 6</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 7</minpt>
+    <maxpt>-0.75 1.25 7.05</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+
+  <surface type="Box">
+    <minpt>-0.8 1.2 6</minpt>
+    <maxpt>-0.75 1.25 7</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.77 0.6 6.1</minpt>
+    <maxpt>-0.75 0.62 6.17</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-1 1.5 -2</minpt>
+    <maxpt>1 2 10</maxpt>
+    <bsdf ref="ceiling" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 9</minpt>
+    <maxpt>-0.77 1.2 10</maxpt>
+    <bsdf ref="door" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 8.95</minpt>
+    <maxpt>-0.75 1.25 9</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 10</minpt>
+    <maxpt>-0.75 1.25 10.05</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+
+  <surface type="Box">
+    <minpt>-0.8 1.2 9</minpt>
+    <maxpt>-0.75 1.25 10</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.77 0.6 9.1</minpt>
+    <maxpt>-0.75 0.62 9.17</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.77 0 3</minpt>
+    <maxpt>0.8 1.2 4</maxpt>
+    <bsdf ref="door" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.75 0 2.95</minpt>
+    <maxpt>0.8 1.25 3</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.75 0 4</minpt>
+    <maxpt>0.8 1.25 4.05</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+
+  <surface type="Box">
+    <minpt>0.75 1.2 3</minpt>
+    <maxpt>0.8 1.25 4</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.75 0.6 3.83</minpt>
+    <maxpt>0.77 0.62 3.9</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.77 0 6</minpt>
+    <maxpt>0.8 1.2 7</maxpt>
+    <bsdf ref="door" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.75 0 5.95</minpt>
+    <maxpt>0.8 1.25 6</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.75 0 7</minpt>
+    <maxpt>0.8 1.25 7.05</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+
+  <surface type="Box">
+    <minpt>0.75 1.2 6</minpt>
+    <maxpt>0.8 1.25 7</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>0.75 0.6 6.83</minpt>
+    <maxpt>0.77 0.62 6.9</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-1 1.5 -2</minpt>
+    <maxpt>1 2 10</maxpt>
+    <bsdf ref="ceiling" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 9</minpt>
+    <maxpt>-0.77 1.2 10</maxpt>
+    <bsdf ref="door" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 8.95</minpt>
+    <maxpt>-0.75 1.25 9</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.8 0 10</minpt>
+    <maxpt>-0.75 1.25 10.05</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+
+  <surface type="Box">
+    <minpt>-0.8 1.2 9</minpt>
+    <maxpt>-0.75 1.25 10</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-0.77 0.6 9.83</minpt>
+    <maxpt>-0.75 0.62 9.9</maxpt>
+    <bsdf ref="wall" />
+  </surface>
+  
+  <surface type="Box">
+    <minpt>-1 1.5 -2</minpt>
+    <maxpt>1 2 10</maxpt>
+    <bsdf ref="ceiling" />
+  </surface>
+
+  <light type="RectangleLight">
+    <position>0 1.47 3</position>
+    <normalDir>0 -1 0</normalDir>
+    <upDir>0 0 -1</upDir>
+    <width>0.6</width>
+    <height>0.6</height>
+    <intensity>1 1 1</intensity>
+  </light>
+  
+  <light type="RectangleLight">
+    <position>0 1.47 6</position>
+    <normalDir>0 -1 0</normalDir>
+    <upDir>0 0 -1</upDir>
+    <width>0.6</width>
+    <height>0.6</height>
+    <intensity>1 1 1</intensity>
+  </light>
+  
+  <light type="RectangleLight">
+    <position>0 1.47 9</position>
+    <normalDir>0 -1 0</normalDir>
+    <upDir>0 0 -1</upDir>
+    <width>0.6</width>
+    <height>0.6</height>
+    <intensity>0.03 0.03 0.03</intensity>
+  </light>
+ 
+
+</scene>
